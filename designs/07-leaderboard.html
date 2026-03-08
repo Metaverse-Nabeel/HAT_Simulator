@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HAT Simulator - Leaderboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            navy: { 50: '#f0f4f8', 100: '#d9e2ec', 200: '#bcccdc', 300: '#9fb3c8', 400: '#829ab1', 500: '#627d98', 600: '#486581', 700: '#334e68', 800: '#243b53', 900: '#102a43' },
+            accent: { 50: '#e6fffa', 100: '#b2f5ea', 200: '#81e6d9', 300: '#4fd1c5', 400: '#38b2ac', 500: '#319795', 600: '#2c7a7b', 700: '#285e61' },
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    .gold-gradient { background: linear-gradient(135deg, #fbbf24, #f59e0b); }
+    .silver-gradient { background: linear-gradient(135deg, #d1d5db, #9ca3af); }
+    .bronze-gradient { background: linear-gradient(135deg, #d97706, #b45309); }
+  </style>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body class="font-sans bg-navy-50 text-navy-900 antialiased">
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="hidden lg:flex flex-col w-64 bg-white border-r border-navy-100 p-6">
+      <div class="flex items-center gap-2 mb-10">
+        <div class="w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center"><span class="text-white font-bold text-sm">H</span></div>
+        <span class="font-bold text-lg text-navy-900">HAT Simulator</span>
+      </div>
+      <nav class="flex-1 space-y-1">
+        <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-navy-600 hover:bg-navy-50 text-sm">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          Dashboard
+        </a>
+        <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-navy-600 hover:bg-navy-50 text-sm">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          Start Exam
+        </a>
+        <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-accent-50 text-accent-700 font-medium text-sm">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+          Leaderboard
+        </a>
+        <a href="#" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-navy-600 hover:bg-navy-50 text-sm">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          Profile
+        </a>
+      </nav>
+      <div class="flex items-center gap-3 mt-auto pt-6 border-t border-navy-100">
+        <div class="w-9 h-9 bg-accent-100 rounded-full flex items-center justify-center"><span class="text-accent-700 font-semibold text-sm">NA</span></div>
+        <div><p class="text-sm font-medium text-navy-900">Nabeel Ahmed</p><p class="text-xs text-navy-500">MS Student</p></div>
+      </div>
+    </aside>
+
+    <main class="flex-1 overflow-auto">
+      <div class="p-6 lg:p-8 max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold text-navy-900 mb-2">Global Leaderboard</h1>
+        <p class="text-navy-500 text-sm mb-8">Top performers ranked by total XP earned</p>
+
+        <!-- Top 3 Podium -->
+        <div class="grid grid-cols-3 gap-4 mb-8">
+          <!-- 2nd Place -->
+          <div class="bg-white rounded-2xl border border-navy-100 shadow-sm p-5 text-center mt-8">
+            <div class="silver-gradient w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-3 text-white font-bold text-sm">2</div>
+            <div class="w-14 h-14 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+              <span class="text-blue-700 font-bold">AK</span>
+            </div>
+            <p class="text-sm font-bold text-navy-900">Ahmed Khan</p>
+            <p class="text-xs text-navy-500 mb-2">HAT-I</p>
+            <p class="text-lg font-bold text-navy-900">12,450 <span class="text-xs text-navy-400 font-normal">XP</span></p>
+            <div class="flex items-center justify-center gap-1 mt-1">
+              <span class="text-orange-500 text-sm">&#128293;</span>
+              <span class="text-xs text-navy-500">24 day streak</span>
+            </div>
+          </div>
+
+          <!-- 1st Place -->
+          <div class="bg-white rounded-2xl border-2 border-amber-300 shadow-lg p-5 text-center">
+            <div class="gold-gradient w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3 text-white font-bold shadow-lg shadow-amber-400/30">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            </div>
+            <div class="w-16 h-16 bg-accent-100 rounded-full flex items-center justify-center mx-auto mb-2">
+              <span class="text-accent-700 font-bold text-lg">SF</span>
+            </div>
+            <p class="text-sm font-bold text-navy-900">Sara Fatima</p>
+            <p class="text-xs text-navy-500 mb-2">HAT-III</p>
+            <p class="text-xl font-bold text-navy-900">15,800 <span class="text-xs text-navy-400 font-normal">XP</span></p>
+            <div class="flex items-center justify-center gap-1 mt-1">
+              <span class="text-orange-500 text-sm">&#128293;</span>
+              <span class="text-xs text-navy-500">45 day streak</span>
+            </div>
+          </div>
+
+          <!-- 3rd Place -->
+          <div class="bg-white rounded-2xl border border-navy-100 shadow-sm p-5 text-center mt-8">
+            <div class="bronze-gradient w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-3 text-white font-bold text-sm">3</div>
+            <div class="w-14 h-14 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+              <span class="text-purple-700 font-bold">MR</span>
+            </div>
+            <p class="text-sm font-bold text-navy-900">M. Rizwan</p>
+            <p class="text-xs text-navy-500 mb-2">HAT-II</p>
+            <p class="text-lg font-bold text-navy-900">11,200 <span class="text-xs text-navy-400 font-normal">XP</span></p>
+            <div class="flex items-center justify-center gap-1 mt-1">
+              <span class="text-orange-500 text-sm">&#128293;</span>
+              <span class="text-xs text-navy-500">18 day streak</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Full Rankings Table -->
+        <div class="bg-white rounded-2xl border border-navy-100 shadow-sm overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="text-left text-navy-500 text-xs uppercase tracking-wider border-b border-navy-100">
+                  <th class="px-6 py-3 font-medium">Rank</th>
+                  <th class="px-6 py-3 font-medium">Student</th>
+                  <th class="px-6 py-3 font-medium">Category</th>
+                  <th class="px-6 py-3 font-medium">Streak</th>
+                  <th class="px-6 py-3 font-medium text-right">Total XP</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-navy-50">
+                <tr class="hover:bg-navy-50/50">
+                  <td class="px-6 py-4"><span class="font-bold text-navy-900">4</span></td>
+                  <td class="px-6 py-4 flex items-center gap-3">
+                    <div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center"><span class="text-green-700 text-xs font-bold">HA</span></div>
+                    <span class="font-medium text-navy-900">Hasan Ali</span>
+                  </td>
+                  <td class="px-6 py-4"><span class="bg-accent-50 text-accent-700 px-2 py-0.5 rounded text-xs font-medium">HAT-I</span></td>
+                  <td class="px-6 py-4"><span class="text-orange-500 text-xs">&#128293; 15 days</span></td>
+                  <td class="px-6 py-4 text-right font-bold text-navy-900">9,870</td>
+                </tr>
+                <tr class="hover:bg-navy-50/50">
+                  <td class="px-6 py-4"><span class="font-bold text-navy-900">5</span></td>
+                  <td class="px-6 py-4 flex items-center gap-3">
+                    <div class="w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center"><span class="text-pink-700 text-xs font-bold">FZ</span></div>
+                    <span class="font-medium text-navy-900">Fatima Zahra</span>
+                  </td>
+                  <td class="px-6 py-4"><span class="bg-purple-50 text-purple-700 px-2 py-0.5 rounded text-xs font-medium">HAT-IV</span></td>
+                  <td class="px-6 py-4"><span class="text-orange-500 text-xs">&#128293; 9 days</span></td>
+                  <td class="px-6 py-4 text-right font-bold text-navy-900">8,540</td>
+                </tr>
+                <!-- Current user highlight -->
+                <tr class="bg-accent-50/50 border-l-4 border-accent-500">
+                  <td class="px-6 py-4"><span class="font-bold text-accent-700">8</span></td>
+                  <td class="px-6 py-4 flex items-center gap-3">
+                    <div class="w-8 h-8 bg-accent-100 rounded-full flex items-center justify-center"><span class="text-accent-700 text-xs font-bold">NA</span></div>
+                    <span class="font-bold text-accent-700">Nabeel Ahmed (You)</span>
+                  </td>
+                  <td class="px-6 py-4"><span class="bg-accent-100 text-accent-700 px-2 py-0.5 rounded text-xs font-medium">HAT-I</span></td>
+                  <td class="px-6 py-4"><span class="text-orange-500 text-xs">&#128293; 12 days</span></td>
+                  <td class="px-6 py-4 text-right font-bold text-accent-700">4,250</td>
+                </tr>
+                <tr class="hover:bg-navy-50/50">
+                  <td class="px-6 py-4"><span class="font-bold text-navy-900">9</span></td>
+                  <td class="px-6 py-4 flex items-center gap-3">
+                    <div class="w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center"><span class="text-orange-700 text-xs font-bold">ZM</span></div>
+                    <span class="font-medium text-navy-900">Zain Malik</span>
+                  </td>
+                  <td class="px-6 py-4"><span class="bg-blue-50 text-blue-700 px-2 py-0.5 rounded text-xs font-medium">HAT-II</span></td>
+                  <td class="px-6 py-4"><span class="text-orange-500 text-xs">&#128293; 5 days</span></td>
+                  <td class="px-6 py-4 text-right font-bold text-navy-900">3,920</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+</body>
+</html>

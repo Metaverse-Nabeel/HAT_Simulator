@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HAT Simulator - Results</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            navy: { 50: '#f0f4f8', 100: '#d9e2ec', 200: '#bcccdc', 300: '#9fb3c8', 400: '#829ab1', 500: '#627d98', 600: '#486581', 700: '#334e68', 800: '#243b53', 900: '#102a43' },
+            accent: { 50: '#e6fffa', 100: '#b2f5ea', 200: '#81e6d9', 300: '#4fd1c5', 400: '#38b2ac', 500: '#319795', 600: '#2c7a7b', 700: '#285e61' },
+          }
+        }
+      }
+    }
+  </script>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body class="font-sans bg-navy-50 text-navy-900 antialiased">
+
+  <!-- Header -->
+  <header class="bg-white border-b border-navy-100 px-6 py-4">
+    <div class="max-w-5xl mx-auto flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center">
+          <span class="text-white font-bold text-sm">H</span>
+        </div>
+        <span class="font-bold text-lg text-navy-900">HAT Simulator</span>
+      </div>
+      <a href="#" class="text-sm text-accent-600 font-medium hover:underline">Back to Dashboard</a>
+    </div>
+  </header>
+
+  <div class="max-w-5xl mx-auto p-6 lg:p-8">
+
+    <!-- Score Hero -->
+    <div class="bg-white rounded-2xl border border-navy-100 shadow-sm p-8 mb-6 text-center">
+      <!-- Score Circle -->
+      <div class="relative w-36 h-36 mx-auto mb-6">
+        <svg class="w-36 h-36 transform -rotate-90" viewBox="0 0 120 120">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#d9e2ec" stroke-width="10"/>
+          <circle cx="60" cy="60" r="50" fill="none" stroke="#319795" stroke-width="10" stroke-dasharray="314" stroke-dashoffset="80" stroke-linecap="round"/>
+        </svg>
+        <div class="absolute inset-0 flex flex-col items-center justify-center">
+          <span class="text-3xl font-extrabold text-navy-900">74%</span>
+          <span class="text-xs text-navy-500">74/100</span>
+        </div>
+      </div>
+
+      <h1 class="text-2xl font-bold text-navy-900 mb-2">Great Performance!</h1>
+      <p class="text-navy-500 text-sm mb-6">HAT-I (Engineering) &middot; MS Level &middot; Medium Difficulty</p>
+
+      <!-- Quick Stats -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto">
+        <div class="bg-navy-50 rounded-xl p-4">
+          <p class="text-xs text-navy-500 mb-1">Correct</p>
+          <p class="text-xl font-bold text-green-600">74</p>
+        </div>
+        <div class="bg-navy-50 rounded-xl p-4">
+          <p class="text-xs text-navy-500 mb-1">Wrong</p>
+          <p class="text-xl font-bold text-red-500">22</p>
+        </div>
+        <div class="bg-navy-50 rounded-xl p-4">
+          <p class="text-xs text-navy-500 mb-1">Skipped</p>
+          <p class="text-xl font-bold text-navy-400">4</p>
+        </div>
+        <div class="bg-navy-50 rounded-xl p-4">
+          <p class="text-xs text-navy-500 mb-1">XP Earned</p>
+          <p class="text-xl font-bold text-amber-500">+185</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section Breakdown + Time Analysis -->
+    <div class="grid lg:grid-cols-2 gap-6 mb-6">
+      <!-- Section Breakdown -->
+      <div class="bg-white rounded-2xl border border-navy-100 shadow-sm p-6">
+        <h2 class="font-bold text-navy-900 mb-5">Section Breakdown</h2>
+        <div class="space-y-5">
+          <!-- Verbal -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded bg-accent-500"></div>
+                <span class="text-sm font-medium text-navy-700">Verbal Reasoning</span>
+              </div>
+              <span class="text-sm font-bold text-navy-900">24/30 (80%)</span>
+            </div>
+            <div class="w-full bg-navy-100 rounded-full h-3">
+              <div class="bg-accent-500 h-3 rounded-full" style="width: 80%"></div>
+            </div>
+          </div>
+          <!-- Analytical -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded bg-amber-400"></div>
+                <span class="text-sm font-medium text-navy-700">Analytical Reasoning</span>
+              </div>
+              <span class="text-sm font-bold text-navy-900">20/30 (67%)</span>
+            </div>
+            <div class="w-full bg-navy-100 rounded-full h-3">
+              <div class="bg-amber-400 h-3 rounded-full" style="width: 67%"></div>
+            </div>
+          </div>
+          <!-- Quantitative -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <div class="w-3 h-3 rounded bg-blue-500"></div>
+                <span class="text-sm font-medium text-navy-700">Quantitative Reasoning</span>
+              </div>
+              <span class="text-sm font-bold text-navy-900">30/40 (75%)</span>
+            </div>
+            <div class="w-full bg-navy-100 rounded-full h-3">
+              <div class="bg-blue-500 h-3 rounded-full" style="width: 75%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Time Analysis -->
+      <div class="bg-white rounded-2xl border border-navy-100 shadow-sm p-6">
+        <h2 class="font-bold text-navy-900 mb-5">Time Analysis</h2>
+        <div class="space-y-4 mb-6">
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-navy-600">Total Time Used</span>
+            <span class="text-sm font-bold text-navy-900">1h 48m / 2h 00m</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-navy-600">Avg. per Question</span>
+            <span class="text-sm font-bold text-navy-900">1m 05s</span>
+          </div>
+        </div>
+
+        <!-- Time per section -->
+        <div class="space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-navy-600">Verbal</span>
+            <div class="flex items-center gap-3">
+              <div class="w-24 bg-navy-100 rounded-full h-2">
+                <div class="bg-accent-500 h-2 rounded-full" style="width: 30%"></div>
+              </div>
+              <span class="text-xs font-medium text-navy-700 w-12 text-right">32m</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-navy-600">Analytical</span>
+            <div class="flex items-center gap-3">
+              <div class="w-24 bg-navy-100 rounded-full h-2">
+                <div class="bg-amber-400 h-2 rounded-full" style="width: 45%"></div>
+              </div>
+              <span class="text-xs font-medium text-navy-700 w-12 text-right">48m</span>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-navy-600">Quantitative</span>
+            <div class="flex items-center gap-3">
+              <div class="w-24 bg-navy-100 rounded-full h-2">
+                <div class="bg-blue-500 h-2 rounded-full" style="width: 25%"></div>
+              </div>
+              <span class="text-xs font-medium text-navy-700 w-12 text-right">28m</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row gap-4 mb-8">
+      <button class="flex-1 bg-accent-500 hover:bg-accent-600 text-white py-3.5 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        Download PDF Report
+      </button>
+      <button class="flex-1 bg-white hover:bg-navy-50 text-navy-900 py-3.5 rounded-xl text-sm font-semibold border border-navy-200 transition flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Review All Answers
+      </button>
+      <button class="flex-1 bg-navy-900 hover:bg-navy-800 text-white py-3.5 rounded-xl text-sm font-semibold transition flex items-center justify-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+        Retake Exam
+      </button>
+    </div>
+
+    <!-- Question-by-Question Review -->
+    <div class="bg-white rounded-2xl border border-navy-100 shadow-sm overflow-hidden">
+      <div class="px-6 py-5 border-b border-navy-100 flex items-center justify-between">
+        <h2 class="font-bold text-navy-900">Answer Review</h2>
+        <div class="flex gap-2">
+          <button class="text-xs px-3 py-1.5 rounded-lg bg-navy-900 text-white font-medium">All</button>
+          <button class="text-xs px-3 py-1.5 rounded-lg text-navy-500 hover:bg-navy-50 font-medium">Correct</button>
+          <button class="text-xs px-3 py-1.5 rounded-lg text-navy-500 hover:bg-navy-50 font-medium">Wrong</button>
+          <button class="text-xs px-3 py-1.5 rounded-lg text-navy-500 hover:bg-navy-50 font-medium">Skipped</button>
+        </div>
+      </div>
+
+      <!-- Review Items -->
+      <div class="divide-y divide-navy-100">
+        <!-- Correct -->
+        <div class="px-6 py-4 hover:bg-navy-50/50">
+          <div class="flex items-start gap-4">
+            <div class="flex items-center gap-3 shrink-0">
+              <span class="w-8 h-8 rounded-lg bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold">1</span>
+              <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-navy-800 truncate">My family and neighbors are ______ these days.</p>
+              <div class="flex gap-4 mt-1 text-xs">
+                <span class="text-green-600">Your answer: <strong>B) worried</strong></span>
+                <span class="text-navy-400">Verbal</span>
+              </div>
+            </div>
+            <button class="text-xs text-accent-600 hover:underline shrink-0">Details</button>
+          </div>
+        </div>
+
+        <!-- Wrong -->
+        <div class="px-6 py-4 hover:bg-navy-50/50">
+          <div class="flex items-start gap-4">
+            <div class="flex items-center gap-3 shrink-0">
+              <span class="w-8 h-8 rounded-lg bg-red-100 text-red-700 flex items-center justify-center text-xs font-bold">2</span>
+              <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-navy-800 truncate">Please sit _____ this chair.</p>
+              <div class="flex gap-4 mt-1 text-xs">
+                <span class="text-red-600">Your answer: <strong>A) at</strong></span>
+                <span class="text-green-600">Correct: <strong>D) on</strong></span>
+                <span class="text-navy-400">Verbal</span>
+              </div>
+            </div>
+            <button class="text-xs text-accent-600 hover:underline shrink-0">Details</button>
+          </div>
+        </div>
+
+        <!-- Correct -->
+        <div class="px-6 py-4 hover:bg-navy-50/50">
+          <div class="flex items-start gap-4">
+            <div class="flex items-center gap-3 shrink-0">
+              <span class="w-8 h-8 rounded-lg bg-green-100 text-green-700 flex items-center justify-center text-xs font-bold">3</span>
+              <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-navy-800 truncate">Nobody listened me.</p>
+              <div class="flex gap-4 mt-1 text-xs">
+                <span class="text-green-600">Your answer: <strong>D) Nobody listened to me</strong></span>
+                <span class="text-navy-400">Verbal</span>
+              </div>
+            </div>
+            <button class="text-xs text-accent-600 hover:underline shrink-0">Details</button>
+          </div>
+        </div>
+
+        <!-- Skipped -->
+        <div class="px-6 py-4 hover:bg-navy-50/50">
+          <div class="flex items-start gap-4">
+            <div class="flex items-center gap-3 shrink-0">
+              <span class="w-8 h-8 rounded-lg bg-navy-100 text-navy-500 flex items-center justify-center text-xs font-bold">4</span>
+              <svg class="w-5 h-5 text-navy-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-sm text-navy-800 truncate">SATURDAY : SUNDAY ::</p>
+              <div class="flex gap-4 mt-1 text-xs">
+                <span class="text-navy-400">Skipped</span>
+                <span class="text-green-600">Correct: <strong>B) November : December</strong></span>
+                <span class="text-navy-400">Verbal</span>
+              </div>
+            </div>
+            <button class="text-xs text-accent-600 hover:underline shrink-0">Details</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Load more -->
+      <div class="px-6 py-4 text-center border-t border-navy-100">
+        <button class="text-sm text-accent-600 font-medium hover:underline">Show all 100 questions</button>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

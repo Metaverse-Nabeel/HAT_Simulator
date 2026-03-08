@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HAT Simulator - Learning Mode</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            navy: { 50: '#f0f4f8', 100: '#d9e2ec', 200: '#bcccdc', 300: '#9fb3c8', 400: '#829ab1', 500: '#627d98', 600: '#486581', 700: '#334e68', 800: '#243b53', 900: '#102a43' },
+            accent: { 50: '#e6fffa', 100: '#b2f5ea', 200: '#81e6d9', 300: '#4fd1c5', 400: '#38b2ac', 500: '#319795', 600: '#2c7a7b', 700: '#285e61' },
+          }
+        }
+      }
+    }
+  </script>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body class="font-sans bg-navy-50 text-navy-900 antialiased">
+
+  <div class="flex flex-col h-screen">
+
+    <!-- Exam Header (No timer countdown — learning mode) -->
+    <header class="bg-white border-b border-navy-100 px-4 lg:px-6 py-3">
+      <div class="flex items-center justify-between max-w-screen-2xl mx-auto">
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 bg-accent-500 rounded-lg flex items-center justify-center">
+              <span class="text-white font-bold text-xs">H</span>
+            </div>
+            <span class="font-bold text-sm text-navy-900 hidden sm:block">HAT-I</span>
+          </div>
+          <div class="hidden sm:block h-6 w-px bg-navy-200"></div>
+          <span class="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg text-xs font-semibold">Learning Mode</span>
+          <span class="bg-accent-50 text-accent-700 px-2.5 py-1 rounded-lg text-xs font-semibold">Analytical Reasoning</span>
+        </div>
+
+        <!-- No timer — self-paced indicator -->
+        <div class="flex items-center gap-2 bg-navy-50 text-navy-600 px-4 py-2 rounded-xl">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+          <span class="text-sm font-medium">Self-Paced</span>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <span class="text-sm text-navy-600"><span class="font-bold text-navy-900">12</span> / 100</span>
+          <button class="bg-navy-900 hover:bg-navy-800 text-white px-4 py-2 rounded-lg text-xs font-semibold transition hidden sm:block">
+            End Session
+          </button>
+        </div>
+      </div>
+
+      <!-- Progress bar (questions completed) -->
+      <div class="max-w-screen-2xl mx-auto mt-2">
+        <div class="w-full bg-navy-100 rounded-full h-1.5">
+          <div class="bg-accent-500 h-1.5 rounded-full transition-all" style="width: 12%"></div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Area -->
+    <div class="flex-1 overflow-y-auto p-6 lg:p-10">
+      <div class="max-w-3xl mx-auto">
+
+        <!-- Question -->
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-3">
+            <span class="bg-navy-900 text-white w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold">12</span>
+            <span class="text-sm text-navy-500">Analytical Reasoning</span>
+          </div>
+          <span class="bg-yellow-50 text-yellow-700 px-2.5 py-1 rounded text-xs font-semibold">Medium</span>
+        </div>
+
+        <!-- Question context / passage -->
+        <div class="bg-navy-50 border border-navy-200 rounded-xl p-5 mb-6 text-sm text-navy-700 leading-relaxed">
+          <p class="font-medium text-navy-800 mb-2">Read the following information:</p>
+          <p>Seven offices in a building are to be painted. The offices are numbered 1 to 7. Two offices must be painted white, two blue, two green, and one yellow. The two green offices must be next to each other. The two blue offices cannot be next to each other. The yellow office cannot be next to a white office. Office 3 must be white.</p>
+        </div>
+
+        <h2 class="text-lg lg:text-xl font-semibold text-navy-900 leading-relaxed mb-8">
+          If office 2 is painted green, which of the following offices must also be painted green?
+        </h2>
+
+        <!-- Options with answer revealed -->
+        <div class="space-y-3 mb-8">
+          <!-- Wrong answer (user selected) -->
+          <div class="flex items-center gap-4 p-4 rounded-xl border-2 border-red-300 bg-red-50/50">
+            <span class="w-8 h-8 rounded-lg border-2 border-red-400 bg-red-500 flex items-center justify-center text-sm font-bold text-white shrink-0">A</span>
+            <span class="text-sm text-navy-800">Office 3</span>
+            <div class="ml-auto flex items-center gap-1.5">
+              <svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+              <span class="text-xs font-medium text-red-600">Your Answer</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 p-4 rounded-xl border-2 border-navy-200">
+            <span class="w-8 h-8 rounded-lg border-2 border-navy-300 flex items-center justify-center text-sm font-bold text-navy-500 shrink-0">B</span>
+            <span class="text-sm text-navy-800">Office 2</span>
+          </div>
+
+          <!-- Correct answer -->
+          <div class="flex items-center gap-4 p-4 rounded-xl border-2 border-green-400 bg-green-50/50">
+            <span class="w-8 h-8 rounded-lg border-2 border-green-500 bg-green-500 flex items-center justify-center text-sm font-bold text-white shrink-0">C</span>
+            <span class="text-sm text-navy-800 font-medium">Office 1</span>
+            <div class="ml-auto flex items-center gap-1.5">
+              <svg class="w-5 h-5 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+              <span class="text-xs font-medium text-green-600">Correct</span>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-4 p-4 rounded-xl border-2 border-navy-200">
+            <span class="w-8 h-8 rounded-lg border-2 border-navy-300 flex items-center justify-center text-sm font-bold text-navy-500 shrink-0">D</span>
+            <span class="text-sm text-navy-800">Office 4</span>
+          </div>
+        </div>
+
+        <!-- Detailed Explanation Panel -->
+        <div class="bg-gradient-to-br from-accent-50 to-blue-50 border border-accent-200 rounded-2xl p-6 mb-10">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="w-8 h-8 bg-accent-500 rounded-lg flex items-center justify-center">
+              <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+            </div>
+            <h3 class="font-bold text-navy-900">Explanation</h3>
+          </div>
+          <div class="text-sm text-navy-700 leading-relaxed space-y-3">
+            <p>The key constraint is that <strong>the two green offices must be next to each other</strong>. If Office 2 is green, the adjacent green office must be either Office 1 or Office 3.</p>
+            <p>However, we know that <strong>Office 3 must be white</strong> (given constraint). Therefore, Office 3 cannot be green.</p>
+            <p>This means the only option is <strong>Office 1</strong>, which must be the other green office to satisfy the adjacency requirement.</p>
+            <p class="text-accent-700 font-medium">Answer: C (Office 1)</p>
+          </div>
+        </div>
+
+        <!-- Score so far -->
+        <div class="bg-white rounded-xl border border-navy-100 p-4 mb-8">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-navy-500">Your progress so far</span>
+            <span class="text-sm font-bold text-navy-900">8/12 correct (67%)</span>
+          </div>
+          <div class="w-full bg-navy-100 rounded-full h-2 mt-2">
+            <div class="bg-accent-500 h-2 rounded-full" style="width: 67%"></div>
+          </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="flex items-center justify-between">
+          <button class="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-navy-200 text-sm font-medium text-navy-700 hover:bg-navy-50 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            Previous
+          </button>
+          <button class="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-accent-500 text-white text-sm font-semibold hover:bg-accent-600 transition">
+            Next Question
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
