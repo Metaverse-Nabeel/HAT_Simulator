@@ -23,7 +23,7 @@ const navItems = [
   },
   {
     label: "Start Exam",
-    href: "/exam/setup",
+    href: "/exam",
     icon: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
@@ -56,11 +56,11 @@ export function Sidebar() {
   const user = session?.user;
   const initials = user?.name
     ? user.name
-        .split(" ")
-        .map((n) => n[0])
-        .join("")
-        .toUpperCase()
-        .slice(0, 2)
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2)
     : "?";
 
   return (
@@ -74,11 +74,10 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition ${
-                active
+              className={`flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition ${active
                   ? "bg-teal-50 text-teal-700 font-medium"
                   : "text-navy-600 hover:bg-navy-50"
-              }`}
+                }`}
             >
               {item.icon}
               {item.label}

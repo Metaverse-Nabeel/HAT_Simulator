@@ -1,134 +1,214 @@
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import { redirect } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Trophy, Flame, Target, BookOpen, ChevronRight, Clock } from "lucide-react";
 import Link from "next/link";
+import { format } from "date-fns";
+import { Button } from "@/components/ui/button";
 
 export default async function DashboardPage() {
   const session = await auth();
-  if (!session) redirect("/");
+  if (!session?.user?.id) {
+    redirect("/");
+  }
 
-  const firstName = session.user.name?.split(" ")[0] ?? "Student";
+  // Fetch Gamification Stats
+  const profile = await prisma.gamificationProfile.findUnique({
+    where: { userId: session.user.id },
+  });
+
+  // Fetch Recent Exam Attempts
+  const recentExams = await prisma.examAttempt.findMany({
+    where: { userId: session.user.id },
+    orderBy: { createdAt: "desc" },
+    take: 5,
+  });
+
+  const stats = [
+    {
+      title: "Total XP",
+      value: profile?.totalXP || 0,
+      icon: Trophy,
+      color: "text-amber-500",
+      bg: "bg-amber-50",
+      desc: "Rank: #--"
+    },
+    {
+      title: "Current Streak",
+      value: `${profile?.currentStreak || 0} Days`,
+      icon: Flame,
+      color: "text-orange-500",
+      bg: "bg-orange-50",
+      desc: "Keep it up!"
+    },
+    {
+      title: "Category Focus",
+      value: "HAT-I",
+      icon: Target,
+      color: "text-teal-500",
+      bg: "bg-teal-50",
+      desc: "Top Section: Verbal"
+    }
+  ];
 
   return (
-    <div className="max-w-6xl">
-      {/* Welcome & Quick Action */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 gap-4">
+    <div className="space-y-8 animate-in fade-in duration-700">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-navy-900">Welcome back, {firstName}!</h1>
-          <p className="text-navy-500 text-sm mt-1">Ready for your next practice session?</p>
+          <h1 className="text-3xl font-bold text-navy-900">Hello, {session.user.name?.split(" ")[0]}!</h1>
+          <p className="text-navy-500 mt-1 text-lg">Your HAT preparation journey is evolving.</p>
         </div>
-        <Link
-          href="/exam/setup"
-          className="bg-teal-500 hover:bg-teal-600 text-white px-6 py-3 rounded-xl text-sm font-semibold transition shadow-sm inline-flex items-center gap-2 shrink-0"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
-          Start New Exam
+        <Link href="/exam">
+          <Button className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-6 rounded-xl shadow-lg transition-transform hover:scale-105 active:scale-95">
+            <BookOpen className="w-5 h-5 mr-2" />
+            Start Practice Session
+          </Button>
         </Link>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <StatCard
-          icon={<svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" /></svg>}
-          iconBg="bg-amber-50"
-          label="Total XP"
-          value="0"
-          sub="Start earning XP"
-        />
-        <StatCard
-          icon={<span className="text-orange-500 text-base">&#128293;</span>}
-          iconBg="bg-orange-50"
-          label="Current Streak"
-          value="0 days"
-          sub="Take a test today!"
-        />
-        <StatCard
-          icon={<svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" /></svg>}
-          iconBg="bg-blue-50"
-          label="Exams Taken"
-          value="0"
-          sub="No exams yet"
-        />
-        <StatCard
-          icon={<svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>}
-          iconBg="bg-green-50"
-          label="Avg Score"
-          value="--"
-          sub="Complete an exam"
-        />
-      </div>
-
-      {/* Performance & Section Breakdown */}
-      <div className="grid lg:grid-cols-3 gap-6 mb-8">
-        <div className="lg:col-span-2 bg-white rounded-2xl p-6 border border-navy-100 shadow-sm">
-          <h2 className="font-bold text-navy-900 mb-6">Score Trend</h2>
-          <div className="h-48 flex items-center justify-center text-navy-400 text-sm">
-            Complete exams to see your score trend
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl p-6 border border-navy-100 shadow-sm">
-          <h2 className="font-bold text-navy-900 mb-6">Section Strengths</h2>
-          <div className="space-y-5">
-            {[
-              { label: "Verbal", pct: 0, color: "bg-teal-500" },
-              { label: "Analytical", pct: 0, color: "bg-amber-400" },
-              { label: "Quantitative", pct: 0, color: "bg-blue-500" },
-            ].map((s) => (
-              <div key={s.label}>
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-navy-700 font-medium">{s.label}</span>
-                  <span className="text-navy-500">{s.pct}%</span>
-                </div>
-                <div className="w-full bg-navy-100 rounded-full h-2.5">
-                  <div className={`${s.color} h-2.5 rounded-full`} style={{ width: `${s.pct}%` }} />
-                </div>
+      {/* Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {stats.map((stat) => (
+          <Card key={stat.title} className="border-none shadow-sm overflow-hidden group">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <CardTitle className="text-sm font-medium text-navy-500 uppercase tracking-wider">{stat.title}</CardTitle>
+              <div className={`${stat.bg} ${stat.color} p-2 rounded-lg group-hover:scale-110 transition-transform`}>
+                <stat.icon className="w-4 h-4" />
               </div>
-            ))}
-          </div>
-        </div>
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-navy-900">{stat.value}</div>
+              <p className="text-xs text-navy-400 mt-1 font-medium">{stat.desc}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {/* Recent Exams */}
-      <div className="bg-white rounded-2xl border border-navy-100 shadow-sm overflow-hidden">
-        <div className="px-6 py-5 flex items-center justify-between border-b border-navy-100">
-          <h2 className="font-bold text-navy-900">Recent Exams</h2>
-          <Link href="/profile" className="text-teal-600 text-sm font-medium hover:underline">
-            View all
-          </Link>
-        </div>
-        <div className="px-6 py-12 text-center text-navy-400 text-sm">
-          No exams taken yet. Start your first practice session!
-        </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Recent Exams Section */}
+        <Card className="lg:col-span-2 border-none shadow-sm overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between bg-white border-b border-navy-50 px-6 py-5">
+            <div>
+              <CardTitle className="text-lg">Recent Exam History</CardTitle>
+              <p className="text-xs text-navy-400 mt-1">Review your latest performance trends.</p>
+            </div>
+            <Link href="/history" className="text-teal-600 text-sm font-semibold hover:text-teal-700 flex items-center">
+              View All <ChevronRight className="w-4 h-4 ml-1" />
+            </Link>
+          </CardHeader>
+          <CardContent className="p-0">
+            {recentExams.length > 0 ? (
+              <Table>
+                <TableHeader className="bg-navy-50/50">
+                  <TableRow>
+                    <TableHead className="px-6">Category</TableHead>
+                    <TableHead>Score</TableHead>
+                    <TableHead>Mode</TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead className="text-right px-6">Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {recentExams.map((exam) => (
+                    <TableRow key={exam.id} className="hover:bg-navy-50/30 transition-colors">
+                      <TableCell className="px-6 font-medium">
+                        <Badge variant="outline" className="border-navy-200">
+                          {exam.category.replace("HAT_", "HAT-")}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-bold text-teal-600">{exam.score || 0}%</span>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={exam.mode === "TESTING" ? "default" : "secondary"}>
+                          {exam.mode}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-navy-500 text-sm">
+                        {format(new Date(exam.createdAt), "MMM d, h:mm a")}
+                      </TableCell>
+                      <TableCell className="text-right px-6">
+                        <Link href={`/exam/${exam.id}/results`}>
+                          <Button variant="ghost" size="sm" className="text-teal-600 hover:text-teal-700 hover:bg-teal-50">
+                            Details
+                          </Button>
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="p-12 text-center">
+                <div className="w-16 h-16 bg-navy-50 text-navy-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Clock className="w-8 h-8" />
+                </div>
+                <h3 className="text-navy-900 font-semibold">No Exams Yet</h3>
+                <p className="text-navy-400 text-sm mt-1 max-w-[250px] mx-auto">
+                  Take your first practice exam to start tracking your performance.
+                </p>
+                <Link href="/exam" className="mt-4 inline-block">
+                  <Button variant="outline" className="border-teal-200 text-teal-600 hover:bg-teal-50">
+                    Go to Exam Setup
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Level & Mastery Sidebar Card */}
+        <Card className="border-none shadow-sm overflow-hidden bg-navy-900 text-white">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center font-bold">
+              <Trophy className="w-5 h-5 mr-2 text-amber-400" />
+              Mastery Level
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div>
+              <div className="flex justify-between items-end mb-2">
+                <div>
+                  <span className="text-3xl font-bold">Lvl 1</span>
+                  <p className="text-navy-300 text-xs mt-1 uppercase tracking-widest font-bold">Apprentice</p>
+                </div>
+                <span className="text-navy-300 text-xs">{profile?.totalXP || 0} / 1000 XP</span>
+              </div>
+              <Progress value={((profile?.totalXP || 0) % 1000) / 10} className="h-2 bg-white/10" />
+            </div>
+
+            <div className="space-y-4 pt-4 border-t border-white/10">
+              <h4 className="text-xs font-semibold uppercase text-navy-300 tracking-wider">Top Skills</h4>
+              <SkillBar label="Verbal Reasoning" value={0} color="bg-teal-400" />
+              <SkillBar label="Analytical Skills" value={0} color="bg-amber-400" />
+              <SkillBar label="Quantitative Ability" value={0} color="bg-blue-400" />
+            </div>
+
+            <div className="p-4 bg-white/5 rounded-xl border border-white/5">
+              <p className="text-sm font-medium">Tip of the Day</p>
+              <p className="text-xs text-navy-300 mt-1 leading-relaxed">
+                Consistency is key! Completing just 10 questions a day maintains your streak and sharpens your intuition.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
 }
 
-function StatCard({
-  icon,
-  iconBg,
-  label,
-  value,
-  sub,
-}: {
-  icon: React.ReactNode;
-  iconBg: string;
-  label: string;
-  value: string;
-  sub: string;
-}) {
+function SkillBar({ label, value, color }: { label: string; value: number; color: string }) {
   return (
-    <div className="bg-white rounded-2xl p-5 border border-navy-100 shadow-sm">
-      <div className="flex items-center gap-2 mb-3">
-        <div className={`w-8 h-8 ${iconBg} rounded-lg flex items-center justify-center`}>
-          {icon}
-        </div>
-        <span className="text-xs text-navy-500 font-medium">{label}</span>
+    <div className="space-y-2">
+      <div className="flex justify-between text-xs">
+        <span className="text-white font-medium">{label}</span>
+        <span className="text-navy-300">{value}%</span>
       </div>
-      <p className="text-2xl font-bold text-navy-900">{value}</p>
-      <p className="text-xs text-navy-400 mt-1">{sub}</p>
+      <Progress value={value} className={`h-1.5 bg-white/5 ${color}`} />
     </div>
   );
 }
