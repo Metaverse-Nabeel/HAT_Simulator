@@ -7,8 +7,9 @@ import { PdfTemplate } from "@/components/results/pdf-template";
 
 export async function GET(
     req: Request,
-    { params }: { params: { attemptId: string } }
+    { params }: { params: Promise<{ attemptId: string }> }
 ) {
+    const { attemptId } = await params;
     const session = await auth();
     if (!session?.user?.id) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -16,7 +17,7 @@ export async function GET(
 
     const attempt = await prisma.examAttempt.findUnique({
         where: {
-            id: params.attemptId,
+            id: attemptId,
             userId: session.user.id,
         },
     });
@@ -37,7 +38,7 @@ export async function GET(
     return new NextResponse(new Uint8Array(buffer), {
         headers: {
             "Content-Type": "application/pdf",
-            "Content-Disposition": `attachment; filename="HAT_Report_${params.attemptId.slice(0, 8)}.pdf"`,
+            "Content-Disposition": `attachment; filename="HAT_Report_${attemptId.slice(0, 8)}.pdf"`,
         },
     });
 }

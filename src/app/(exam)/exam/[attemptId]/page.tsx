@@ -5,14 +5,13 @@ import { redirect } from "next/navigation";
 export default async function ExamAttemptRootPage({
     params,
 }: {
-    params: { attemptId: string };
+    params: Promise<{ attemptId: string }>;
 }) {
+    const { attemptId } = await params;
     const session = await auth();
     if (!session?.user?.id) {
         redirect("/");
     }
-
-    const attemptId = params.attemptId;
 
     const attempt = await prisma.examAttempt.findUnique({
         where: {
