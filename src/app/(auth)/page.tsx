@@ -1,121 +1,76 @@
-import { auth, signIn } from "@/lib/auth";
+import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { CredentialsLogin } from "@/components/auth/credentials-login";
+import { AuthCard } from "@/components/auth/auth-card";
 
-export default async function LandingPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ admin?: string }>;
-}) {
-  const { admin } = await searchParams;
+export default async function LandingPage() {
   const session = await auth();
   if (session) redirect("/dashboard");
 
   return (
-    <div className="font-sans bg-white text-navy-900 antialiased">
+    <div className="font-sans bg-white text-navy-900 antialiased overflow-x-hidden">
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-navy-100">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">H</span>
-            </div>
-            <span className="font-bold text-xl text-navy-900">HAT Simulator</span>
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">H</span>
+              </div>
+              <span className="font-bold text-xl text-navy-900">HAT Simulator</span>
+            </Link>
           </div>
           <div className="hidden md:flex items-center gap-8 text-sm font-medium text-navy-600">
             <a href="#features" className="hover:text-navy-900 transition">Features</a>
             <a href="#categories" className="hover:text-navy-900 transition">Categories</a>
             <a href="#how-it-works" className="hover:text-navy-900 transition">How It Works</a>
           </div>
-          <form
-            action={async () => {
-              "use server";
-              await signIn("google", { redirectTo: "/dashboard" });
-            }}
-          >
-            <button
-              type="submit"
-              className="bg-navy-900 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-navy-800 transition flex items-center gap-2"
-            >
-              <GoogleIcon className="w-4 h-4" />
-              Sign in with Google
-            </button>
-          </form>
+          <div className="flex items-center gap-4">
+            <a href="#auth" className="bg-navy-900 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-navy-800 transition">
+              Get Started
+            </a>
+          </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="gradient-hero pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
-        <div className="absolute top-20 right-10 w-72 h-72 bg-teal-400/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-10 left-10 w-96 h-96 bg-teal-500/5 rounded-full blur-3xl" />
+      <section className="gradient-hero pt-32 pb-20 md:pt-44 md:pb-40 relative">
+        <div className="absolute top-20 right-10 w-96 h-96 bg-teal-400/20 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-10 left-10 w-[500px] h-[500px] bg-teal-500/10 rounded-full blur-[150px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-16">
             <div className="max-w-2xl text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-400/20 rounded-full px-4 py-1.5 mb-6 mx-auto lg:mx-0">
+              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/20 backdrop-blur-sm rounded-full px-4 py-1.5 mb-8 mx-auto lg:mx-0">
                 <span className="w-2 h-2 bg-teal-400 rounded-full animate-pulse" />
-                <span className="text-teal-200 text-sm font-medium">AI-Powered Practice Platform</span>
+                <span className="text-teal-50 text-xs font-bold uppercase tracking-widest">Premium AI Learning Platform</span>
               </div>
-              <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-6">
-                Master the HEC HAT Exam<br />
-                <span className="text-teal-300">with Confidence</span>
+              <h1 className="text-5xl md:text-7xl font-extrabold text-white leading-[1.1] mb-8">
+                Master the HEC HAT <br />
+                <span className="text-teal-300">Exam Smarter.</span>
               </h1>
-              <p className="text-lg md:text-xl text-navy-300 mb-10 max-w-2xl leading-relaxed">
-                Practice with AI-generated questions tailored to your category and difficulty level. Track your progress, compete on leaderboards, and ace your exam.
+              <p className="text-xl md:text-2xl text-navy-200 mb-12 max-w-xl leading-relaxed font-medium">
+                The leading simulator for Pakistan&apos;s HEC HAT. Practice with AI-calibrated questions and track your performance in real-time.
               </p>
-              {!admin && (
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                  <form
-                    action={async () => {
-                      "use server";
-                      await signIn("google", { redirectTo: "/dashboard" });
-                    }}
-                  >
-                    <button
-                      type="submit"
-                      className="bg-teal-500 hover:bg-teal-600 text-white px-8 py-4 rounded-xl text-base font-semibold transition shadow-lg shadow-teal-500/25 flex items-center justify-center gap-2"
-                    >
-                      <GoogleIcon className="w-5 h-5" />
-                      Get Started Free
-                    </button>
-                  </form>
-                  <Link
-                    href="#categories"
-                    className="glass-card text-white px-8 py-4 rounded-xl text-base font-semibold hover:bg-white/10 transition text-center"
-                  >
-                    View Categories
-                  </Link>
+
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-8 max-w-lg mx-auto lg:mx-0">
+                <div>
+                  <div className="text-3xl font-bold text-white">5.0k+</div>
+                  <div className="text-navy-400 text-xs mt-1 font-bold uppercase tracking-wider">Practice Qs</div>
                 </div>
-              )}
-            </div>
-
-            {admin && (
-              <div className="w-full max-w-sm shrink-0">
-                <CredentialsLogin />
-                <Link
-                  href="/"
-                  className="mt-4 text-xs text-navy-300 hover:text-white transition block w-full text-center"
-                >
-                  Back to Google Login
-                </Link>
+                <div>
+                  <div className="text-3xl font-bold text-white">10k+</div>
+                  <div className="text-navy-400 text-xs mt-1 font-bold uppercase tracking-wider">Students</div>
+                </div>
+                <div className="hidden sm:block">
+                  <div className="text-3xl font-bold text-teal-400">99%</div>
+                  <div className="text-navy-400 text-xs mt-1 font-bold uppercase tracking-wider">Satisfaction</div>
+                </div>
               </div>
-            )}
-          </div>
+            </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-3 gap-6 mt-16 max-w-lg">
-            <div>
-              <div className="text-3xl font-bold text-white">5</div>
-              <div className="text-navy-400 text-sm mt-1">HAT Categories</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-white">100+</div>
-              <div className="text-navy-400 text-sm mt-1">Questions/Exam</div>
-            </div>
-            <div>
-              <div className="text-3xl font-bold text-teal-300">AI</div>
-              <div className="text-navy-400 text-sm mt-1">Generated</div>
+            <div id="auth" className="w-full max-w-md shrink-0 scroll-mt-24">
+              <AuthCard />
             </div>
           </div>
         </div>
@@ -198,7 +153,7 @@ export default async function LandingPage({
 
           <div className="grid md:grid-cols-3 gap-12">
             {[
-              { step: "1", title: "Sign Up", desc: "One-click Google sign-in. No forms, no hassle. Start practicing instantly." },
+              { step: "1", title: "Sign Up", desc: "Create an account or use one-click Google sign-in to start practicing instantly." },
               { step: "2", title: "Configure Your Exam", desc: "Pick your category, level, difficulty, and mode. Customize time and question count." },
               { step: "3", title: "Practice & Improve", desc: "Take tests, earn XP, track your progress, and climb the leaderboard." },
             ].map((item) => (
@@ -214,29 +169,6 @@ export default async function LandingPage({
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="gradient-hero py-20 md:py-28 relative overflow-hidden">
-        <div className="absolute inset-0 bg-teal-500/5" />
-        <div className="max-w-3xl mx-auto px-6 text-center relative z-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to ace your HAT exam?</h2>
-          <p className="text-navy-300 text-lg mb-10">Join thousands of students preparing smarter with AI-powered practice tests.</p>
-          <form
-            action={async () => {
-              "use server";
-              await signIn("google", { redirectTo: "/dashboard" });
-            }}
-          >
-            <button
-              type="submit"
-              className="bg-teal-500 hover:bg-teal-600 text-white px-10 py-4 rounded-xl text-base font-semibold transition shadow-lg shadow-teal-500/25 inline-flex items-center gap-2"
-            >
-              <GoogleIcon className="w-5 h-5" />
-              Start Practicing Now
-            </button>
-          </form>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="bg-navy-900 text-navy-400 py-12">
         <div className="max-w-7xl mx-auto px-6">
@@ -247,28 +179,11 @@ export default async function LandingPage({
               </div>
               <span className="font-bold text-lg text-white">HAT Simulator</span>
             </div>
-            <div className="flex flex-col items-center md:items-end gap-1">
-              <p className="text-sm">Prepare for Pakistan&apos;s HEC HAT exam with AI-powered practice.</p>
-              <div className="flex items-center gap-4">
-                <p className="text-sm">&copy; 2026 HAT Simulator. All rights reserved.</p>
-                <Link href="/?admin=true" className="text-xs text-navy-500 hover:text-navy-300 transition">Admin Login</Link>
-              </div>
-            </div>
+            <p className="text-xs">&copy; 2026 HAT Simulator. All rights reserved.</p>
           </div>
         </div>
       </footer>
     </div>
-  );
-}
-
-function GoogleIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#fff" />
-      <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#fff" />
-      <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#fff" />
-      <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#fff" />
-    </svg>
   );
 }
 

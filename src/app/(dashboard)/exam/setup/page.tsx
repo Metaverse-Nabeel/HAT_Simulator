@@ -67,7 +67,7 @@ export default function ExamSetupPage() {
           <div className="w-8 h-8 bg-teal-500 rounded-lg flex items-center justify-center text-white text-sm font-bold">1</div>
           <h2 className="font-bold text-navy-900">Select Category</h2>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {categories.map((cat) => {
             const meta = CATEGORY_META[cat];
             const selected = category === cat;
@@ -75,24 +75,27 @@ export default function ExamSetupPage() {
               <button
                 key={cat}
                 onClick={() => setCategory(cat)}
-                className={`text-left border-2 rounded-xl p-4 transition ${
-                  selected
-                    ? "border-teal-500 bg-teal-50/50"
-                    : "border-navy-200 hover:border-navy-300"
-                }`}
+                className={`text-left border-2 rounded-2xl p-5 transition-all duration-300 min-h-[140px] flex flex-col justify-between ${selected
+                    ? "border-teal-500 bg-teal-50/50 shadow-md shadow-teal-500/10 scale-[1.02]"
+                    : "border-navy-100 hover:border-navy-300 bg-white"
+                  }`}
               >
-                <div className="flex items-center gap-2 mb-2">
-                  <span className={`${meta.tagColor} text-white text-xs font-bold px-2.5 py-0.5 rounded-full`}>
-                    {meta.tag}
-                  </span>
-                  {selected && (
-                    <svg className="w-4 h-4 text-teal-500 ml-auto" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                  )}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className={`${meta.tagColor} text-white text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-lg`}>
+                      {meta.tag}
+                    </span>
+                    {selected && (
+                      <div className="w-5 h-5 bg-teal-500 rounded-full flex items-center justify-center">
+                        <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-base font-bold text-navy-900 leading-tight">{meta.label}</p>
                 </div>
-                <p className="text-sm font-semibold text-navy-900">{meta.label}</p>
-                <p className="text-xs text-navy-500 mt-1">{meta.description}</p>
+                <p className="text-xs text-navy-500 mt-2 line-clamp-2 leading-relaxed">{meta.description}</p>
               </button>
             );
           })}
@@ -134,11 +137,10 @@ export default function ExamSetupPage() {
                 <button
                   key={l}
                   onClick={() => setLevel(l)}
-                  className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition ${
-                    level === l
+                  className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition ${level === l
                       ? "bg-white shadow-sm font-semibold text-navy-900"
                       : "text-navy-500 hover:text-navy-700"
-                  }`}
+                    }`}
                 >
                   {l === "PHD" ? "PhD" : l}
                 </button>
@@ -153,11 +155,10 @@ export default function ExamSetupPage() {
                 <button
                   key={m}
                   onClick={() => setMode(m)}
-                  className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition ${
-                    mode === m
+                  className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition ${mode === m
                       ? "bg-white shadow-sm font-semibold text-navy-900"
                       : "text-navy-500 hover:text-navy-700"
-                  }`}
+                    }`}
                 >
                   {m === "TESTING" ? "Testing" : "Learning"}
                 </button>
@@ -185,9 +186,8 @@ export default function ExamSetupPage() {
               <button
                 key={d.value}
                 onClick={() => setDifficulty(d.value as Difficulty)}
-                className={`px-5 py-2.5 rounded-xl border-2 text-sm font-medium transition ${
-                  selected ? d.color : "border-navy-200 text-navy-700 hover:border-navy-300"
-                }`}
+                className={`px-5 py-2.5 rounded-xl border-2 text-sm font-medium transition ${selected ? d.color : "border-navy-200 text-navy-700 hover:border-navy-300"
+                  }`}
               >
                 {d.label}
               </button>
@@ -260,14 +260,12 @@ export default function ExamSetupPage() {
                 setSectionPractice(!sectionPractice);
                 if (!sectionPractice) setSelectedSection("VERBAL");
               }}
-              className={`relative w-11 h-6 rounded-full transition ${
-                sectionPractice ? "bg-teal-500" : "bg-navy-200"
-              }`}
+              className={`relative w-11 h-6 rounded-full transition ${sectionPractice ? "bg-teal-500" : "bg-navy-200"
+                }`}
             >
               <span
-                className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition ${
-                  sectionPractice ? "left-6" : "left-1"
-                }`}
+                className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition ${sectionPractice ? "left-6" : "left-1"
+                  }`}
               />
             </button>
           </div>
@@ -277,11 +275,10 @@ export default function ExamSetupPage() {
               <button
                 key={s.value}
                 onClick={() => setSelectedSection(s.value)}
-                className={`flex-1 text-center py-3 rounded-xl border-2 text-sm font-medium transition ${
-                  selectedSection === s.value && sectionPractice
+                className={`flex-1 text-center py-3 rounded-xl border-2 text-sm font-medium transition ${selectedSection === s.value && sectionPractice
                     ? "border-teal-500 bg-teal-50 text-teal-700"
                     : "border-navy-200 text-navy-600 hover:border-navy-300"
-                }`}
+                  }`}
               >
                 {s.label}
               </button>
