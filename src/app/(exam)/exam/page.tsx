@@ -83,10 +83,10 @@ export default function ExamSetupPage() {
                                 Category
                             </label>
                             <Select value={category} onValueChange={(val) => val && setCategory(val)}>
-                                <SelectTrigger>
+                                <SelectTrigger className="w-full h-11 bg-white border-navy-200">
                                     <SelectValue placeholder="Select Category" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent alignItemWithTrigger={false} sideOffset={8} className="w-[var(--anchor-width)] min-w-[300px]">
                                     <SelectItem value="HAT_I">HAT-I (Engineering/CS)</SelectItem>
                                     <SelectItem value="HAT_II">HAT-II (Management)</SelectItem>
                                     <SelectItem value="HAT_III">HAT-III (Arts/Social)</SelectItem>
@@ -102,10 +102,10 @@ export default function ExamSetupPage() {
                                 Degree Level
                             </label>
                             <Select value={level} onValueChange={(val) => val && setLevel(val)}>
-                                <SelectTrigger>
+                                <SelectTrigger className="w-full h-11 bg-white border-navy-200">
                                     <SelectValue placeholder="Select Level" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent alignItemWithTrigger={false} sideOffset={8}>
                                     <SelectItem value="MS">MS / MPhil</SelectItem>
                                     <SelectItem value="PHD">PhD</SelectItem>
                                 </SelectContent>
@@ -118,10 +118,10 @@ export default function ExamSetupPage() {
                                 Exam Mode
                             </label>
                             <Select value={mode} onValueChange={(val) => val && setMode(val)}>
-                                <SelectTrigger>
+                                <SelectTrigger className="w-full h-11 bg-white border-navy-200">
                                     <SelectValue placeholder="Select Mode" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent alignItemWithTrigger={false} sideOffset={8}>
                                     <SelectItem value="TESTING">Testing (Timed, No Answers)</SelectItem>
                                     <SelectItem value="LEARNING">Learning (Untimed, Explanations)</SelectItem>
                                 </SelectContent>
@@ -134,10 +134,10 @@ export default function ExamSetupPage() {
                                 Difficulty
                             </label>
                             <Select value={difficulty} onValueChange={(val) => val && setDifficulty(val)}>
-                                <SelectTrigger>
+                                <SelectTrigger className="w-full h-11 bg-white border-navy-200">
                                     <SelectValue placeholder="Select Difficulty" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent alignItemWithTrigger={false} sideOffset={8}>
                                     <SelectItem value="RANDOM">Random (Mixed)</SelectItem>
                                     <SelectItem value="EASY">Easy</SelectItem>
                                     <SelectItem value="MEDIUM">Medium</SelectItem>
