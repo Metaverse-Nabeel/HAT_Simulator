@@ -78,7 +78,7 @@ const distribution = getSectionDistribution('HAT-I');
 - **Backend**: Next.js Server Actions & API Routes (Node.js).
 - **Database**: Vercel Postgres managed via Prisma ORM.
 - **Authentication**: NextAuth.js (Auth.js) with Google OAuth Provider for seamless self-signup.
-- **AI Integration**: Anthropic Claude API (`@anthropic-ai/sdk`) utilizing structured JSON schema for question generation. Integrates a custom `question-generator` AI skill built using actual HAT syllabus and past papers to ensure accurate formatting, difficulty calibration, and domain specificity. **AI Generation Rule:** The AI question generation system must strictly respect the section distribution for the requested category (e.g., if HAT-III is selected and 40 verbal questions are required, the generator must produce exactly 40 verbal reasoning questions). Daily test generation limit per user (e.g., 10/day) to control API costs.
+- **AI Integration**: Google GenAI API (`@google/genai`) utilizing the Bonsai Frontier model (`gemini-2.5-pro`) with structured JSON schema for question generation. Integrates a custom `question-generator` AI skill built using actual HAT syllabus and past papers to ensure accurate formatting, difficulty calibration, and domain specificity. **AI Generation Rule:** The AI question generation system must strictly respect the section distribution for the requested category (e.g., if HAT-III is selected and 40 verbal questions are required, the generator must produce exactly 40 verbal reasoning questions). Daily test generation limit per user (e.g., 10/day) to control API costs.
 - **PDF Generation**: `@react-pdf/renderer` or `jspdf` for generating downloadable test reports directly in the browser or via backend.
 - **Deployment**: Vercel.
 
