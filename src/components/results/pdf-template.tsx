@@ -1,5 +1,6 @@
 import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Font } from '@react-pdf/renderer';
+import { formatPST } from '@/lib/utils/date';
 
 // Register standard fonts
 Font.register({
@@ -74,7 +75,7 @@ export function PdfTemplate({ attempt, user }: { attempt: any, user: any }) {
                             <Text style={styles.subtitle}>Email: {user.email}</Text>
                         </View>
                         <View style={{ alignItems: 'flex-end' }}>
-                            <Text style={styles.subtitle}>Date: {new Date(attempt.createdAt).toLocaleDateString()}</Text>
+                            <Text style={styles.subtitle}>Date: {formatPST(attempt.createdAt)}</Text>
                             <Text style={styles.subtitle}>ID: {attempt.id.slice(0, 8)}</Text>
                         </View>
                     </View>
@@ -104,7 +105,7 @@ export function PdfTemplate({ attempt, user }: { attempt: any, user: any }) {
                     <View style={styles.scoreBox}>
                         <View style={styles.scoreItem}>
                             <Text style={styles.scoreLabel}>Final Score</Text>
-                            <Text style={styles.scoreValue}>{attempt.score} / {attempt.maxScore}</Text>
+                            <Text style={styles.scoreValue}>{score} / {maxScore}</Text>
                         </View>
                         <View style={styles.scoreItem}>
                             <Text style={styles.scoreLabel}>Accuracy</Text>
@@ -125,10 +126,12 @@ export function PdfTemplate({ attempt, user }: { attempt: any, user: any }) {
                         const statusKey = isCorrect ? 'statusCORRECT' : isSkipped ? 'statusSKIPPED' : 'statusWRONG';
 
                         return (
-                            <View key={i} style={styles.qContainer} wrap={false}>
+                            <View key={i} style={styles.qContainer}>
                                 <View style={styles.qHeader}>
-                                    <Text style={styles.qNum}>{i + 1}.</Text>
-                                    <Text style={styles.qText}>{q.questionText}</Text>
+                                    <View style={{ flexDirection: 'row', flex: 1 }}>
+                                        <Text style={styles.qNum}>{i + 1}.</Text>
+                                        <Text style={styles.qText}>{q.questionText}</Text>
+                                    </View>
                                     <View>
                                         <Text style={[styles.qStatus, (styles as any)[statusKey]]}>
                                             {isSkipped ? 'SKIPPED' : isCorrect ? 'CORRECT' : 'WRONG'}

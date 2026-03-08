@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { formatPST } from "@/lib/utils/date";
 import { Button } from "@/components/ui/button";
 import { Calendar, Clock, ChevronRight, History as HistoryIcon, Target, Award } from "lucide-react";
 import Link from "next/link";
@@ -137,7 +138,7 @@ export default async function HistoryPage() {
                                             <TableCell className="text-navy-500 text-sm">
                                                 <div className="flex items-center gap-1.5">
                                                     <Calendar className="w-3 h-3" />
-                                                    {format(new Date(attempt.createdAt), "MMM d, yyyy")}
+                                                    {formatPST(new Date(attempt.createdAt), "MMM d, yyyy")}
                                                 </div>
                                             </TableCell>
                                             <TableCell className="text-right px-6">

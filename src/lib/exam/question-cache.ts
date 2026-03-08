@@ -11,7 +11,8 @@ export async function getCachedQuestions(
 ) {
   const difficultyFilter = difficulty === "RANDOM" ? {} : { difficulty };
 
-  return prisma.question.findMany({
+  // 1. Try with specific filter
+  const primary = await prisma.question.findMany({
     where: {
       category,
       level,
@@ -20,8 +21,24 @@ export async function getCachedQuestions(
       id: { notIn: excludeIds },
     },
     take: count,
-    orderBy: { createdAt: "desc" },
   });
+
+  if (primary.length >= count || difficulty === "RANDOM") {
+    return primary;
+  }
+
+  // 2. Fallback: If not enough, get from ANY difficulty to ensure uniqueness
+  const secondary = await prisma.question.findMany({
+    where: {
+      category,
+      level,
+      section,
+      id: { notIn: [...excludeIds, ...primary.map(p => p.id)] },
+    },
+    take: count - primary.length,
+  });
+
+  return [...primary, ...secondary];
 }
 
 export async function cacheQuestions(

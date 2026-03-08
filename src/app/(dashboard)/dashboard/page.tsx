@@ -7,7 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Trophy, Flame, Target, BookOpen, ChevronRight, Clock } from "lucide-react";
 import Link from "next/link";
-import { format } from "date-fns";
+import { formatPST } from "@/lib/utils/date";
 import { Button } from "@/components/ui/button";
 
 export default async function DashboardPage() {
@@ -129,7 +129,7 @@ export default async function DashboardPage() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-navy-500 text-sm">
-                        {format(new Date(exam.createdAt), "MMM d, h:mm a")}
+                        {formatPST(new Date(exam.createdAt))}
                       </TableCell>
                       <TableCell className="text-right px-6">
                         <Link href={`/exam/${exam.id}/results`}>
