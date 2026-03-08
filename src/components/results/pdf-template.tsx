@@ -54,10 +54,13 @@ const styles = StyleSheet.create({
 
 export function PdfTemplate({ attempt, user }: { attempt: any, user: any }) {
     const rs = attempt.resultsData || [];
-    const pct = attempt.maxScore > 0 ? Math.round((attempt.score / attempt.maxScore) * 100) : 0;
+    const score = attempt.score || 0;
+    const maxScore = attempt.maxScore || rs.length || 0;
+    const pct = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
 
-    const m = Math.floor(attempt.timeSpent / 60);
-    const s = attempt.timeSpent % 60;
+    const timeSpent = attempt.timeSpent || 0;
+    const m = Math.floor(timeSpent / 60);
+    const s = timeSpent % 60;
     const timeStr = `${m}m ${s}s`;
 
     return (

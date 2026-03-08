@@ -52,20 +52,32 @@ export async function GET(
         explanation: r.explanation || expMap.get(r.questionId) || "Explanation not available."
     }));
 
-    // Override resultsData for the template
-    const hydratedAttempt = {
+    // Override resultsData for the template with clean, serializable objects
+    const hydratedAttempt = JSON.parse(JSON.stringify({
         ...attempt,
         resultsData: hydratedResults
-    };
+    }));
 
-    const buffer = await renderToBuffer(
-        <PdfTemplate attempt={hydratedAttempt} user={user} />
-    );
+    try {
+        console.log(`[PDF] Starting render for attempt ${attemptId}`);
+        const buffer = await renderToBuffer(
+            <PdfTemplate attempt={hydratedAttempt} user={user} />
+        );
 
-    return new NextResponse(new Uint8Array(buffer), {
-        headers: {
-            "Content-Type": "application/pdf",
-            "Content-Disposition": `attachment; filename="HAT_Report_${attemptId.slice(0, 8)}.pdf"`,
-        },
-    });
+        console.log(`[PDF] Render successful, buffer size: ${buffer.length}`);
+
+        return new Response(new Uint8Array(buffer), {
+            headers: {
+                "Content-Type": "application/pdf",
+                "Content-Disposition": `attachment; filename="HAT_Report_${attemptId.slice(0, 8)}.pdf"`,
+                "Cache-Control": "no-store, max-age=0"
+            },
+        });
+    } catch (renderError: any) {
+        console.error("[PDF] Render Error:", renderError);
+        return NextResponse.json({
+            error: "Failed to generate PDF",
+            details: renderError.message
+        }, { status: 500 });
+    }
 }
