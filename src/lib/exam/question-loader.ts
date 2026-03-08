@@ -27,19 +27,32 @@ export async function loadQuestions(
 
   const allQuestions: LeanExamQuestion[] = [];
 
-  // Process sections in parallel
-  const sectionPromises = sections.map(async ({ section, count }) => {
-    // 1. STRICT CACHE FIRST (No AI generation here to ensure instant response)
+  // Determine section order: Default to typical HAT order
+  const sectionOrder: Section[] = sectionPractice
+    ? [sectionPractice]
+    : ["VERBAL", "ANALYTICAL", "QUANTITATIVE"];
+
+  // Process sections in specific order
+  for (const section of sectionOrder) {
+    const config = sections.find(s => s.section === section);
+    if (!config) continue;
+
+    const { count } = config;
+
+    // 1. STRICT CACHE FIRST
     const cached = await getCachedQuestions(
       category,
       level,
       section,
       difficulty,
-      count, // Request the full amount
+      count,
       excludeIds
     );
 
-    const questions: LeanExamQuestion[] = cached.map((q) => {
+    // Shuffle cached questions in-memory to add variety within the section
+    const shuffledCached = [...cached].sort(() => Math.random() - 0.5);
+
+    const questions: LeanExamQuestion[] = shuffledCached.map((q) => {
       const base = {
         id: q.id,
         questionText: q.questionText,
@@ -55,26 +68,14 @@ export async function loadQuestions(
       return base;
     });
 
-    // 2. If short, fill with samples (to ensure user always gets a test immediately)
+    // 2. If short, fill with samples
     const remaining = count - questions.length;
     if (remaining > 0) {
       const samples = generateSampleQuestions(section, difficulty, remaining);
-      // Sample questions DON'T get stripped because they aren't in the DB to fetch later
       questions.push(...samples);
     }
 
-    return questions;
-  });
-
-  const results = await Promise.all(sectionPromises);
-  for (const qs of results) {
-    allQuestions.push(...qs);
-  }
-
-  // Shuffle
-  for (let i = allQuestions.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [allQuestions[i], allQuestions[j]] = [allQuestions[j], allQuestions[i]];
+    allQuestions.push(...questions);
   }
 
   return allQuestions.slice(0, questionCount);
@@ -98,17 +99,17 @@ export async function replenishQuestionCache(
 
   for (const section of sections) {
     try {
-      // Check if we have enough questions in cache (threshold e.g. 50)
-      const cached = await getCachedQuestions(category, level, section, difficulty, 50);
+      // Check if we have enough questions in cache (threshold e.g. 200 for deep variety)
+      const cached = await getCachedQuestions(category, level, section, difficulty, 200);
 
-      if (cached.length < 50) {
+      if (cached.length < 200) {
         console.log(`[AI-REPLENISH] Low cache for ${section} (${cached.length}). Generating more...`);
         const generated = await generateQuestions(
           category,
           level,
           section,
           difficulty,
-          20 // Generate in batches of 20
+          50 // Generate in batches of 50 for efficiency
         );
 
         if (generated.length > 0) {

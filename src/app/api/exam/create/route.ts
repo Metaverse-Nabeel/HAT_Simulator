@@ -46,14 +46,32 @@ export async function POST(req: Request) {
     );
   }
 
-  // 1. Load questions INSTANTLY from cache/pool (LEAN mode to save memory)
+  // 1. Get seen question IDs to avoid repeats (last 15 attempts)
+  const recentAttempts = await prisma.examAttempt.findMany({
+    where: { userId: session.user.id },
+    orderBy: { createdAt: "desc" },
+    take: 15,
+    select: { questionsData: true }
+  });
+
+  const excludeIds: string[] = [];
+  recentAttempts.forEach(attempt => {
+    const qs = (attempt.questionsData as any[]) || [];
+    qs.forEach(q => {
+      if (q.id && !q.id.startsWith('sample-')) {
+        excludeIds.push(q.id);
+      }
+    });
+  });
+
+  // 2. Load questions INSTANTLY from cache/pool (LEAN mode to save memory)
   const questions = await loadQuestions(
     category,
     level,
     difficulty,
     questionCount,
     sectionPractice,
-    [],
+    excludeIds,
     true // lean: true
   );
 
