@@ -1,8 +1,14 @@
 import { auth, signIn } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { CredentialsLogin } from "@/components/auth/credentials-login";
 
-export default async function LandingPage() {
+export default async function LandingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ admin?: string }>;
+}) {
+  const { admin } = await searchParams;
   const session = await auth();
   if (session) redirect("/dashboard");
 
@@ -45,40 +51,56 @@ export default async function LandingPage() {
         <div className="absolute bottom-10 left-10 w-96 h-96 bg-teal-500/5 rounded-full blur-3xl" />
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-400/20 rounded-full px-4 py-1.5 mb-6">
-              <span className="w-2 h-2 bg-teal-400 rounded-full animate-pulse" />
-              <span className="text-teal-200 text-sm font-medium">AI-Powered Practice Platform</span>
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
+            <div className="max-w-2xl text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 bg-teal-500/10 border border-teal-400/20 rounded-full px-4 py-1.5 mb-6 mx-auto lg:mx-0">
+                <span className="w-2 h-2 bg-teal-400 rounded-full animate-pulse" />
+                <span className="text-teal-200 text-sm font-medium">AI-Powered Practice Platform</span>
+              </div>
+              <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-6">
+                Master the HEC HAT Exam<br />
+                <span className="text-teal-300">with Confidence</span>
+              </h1>
+              <p className="text-lg md:text-xl text-navy-300 mb-10 max-w-2xl leading-relaxed">
+                Practice with AI-generated questions tailored to your category and difficulty level. Track your progress, compete on leaderboards, and ace your exam.
+              </p>
+              {!admin && (
+                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                  <form
+                    action={async () => {
+                      "use server";
+                      await signIn("google", { redirectTo: "/dashboard" });
+                    }}
+                  >
+                    <button
+                      type="submit"
+                      className="bg-teal-500 hover:bg-teal-600 text-white px-8 py-4 rounded-xl text-base font-semibold transition shadow-lg shadow-teal-500/25 flex items-center justify-center gap-2"
+                    >
+                      <GoogleIcon className="w-5 h-5" />
+                      Get Started Free
+                    </button>
+                  </form>
+                  <Link
+                    href="#categories"
+                    className="glass-card text-white px-8 py-4 rounded-xl text-base font-semibold hover:bg-white/10 transition text-center"
+                  >
+                    View Categories
+                  </Link>
+                </div>
+              )}
             </div>
-            <h1 className="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-6">
-              Master the HEC HAT Exam<br />
-              <span className="text-teal-300">with Confidence</span>
-            </h1>
-            <p className="text-lg md:text-xl text-navy-300 mb-10 max-w-2xl leading-relaxed">
-              Practice with AI-generated questions tailored to your category and difficulty level. Track your progress, compete on leaderboards, and ace your exam.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <form
-                action={async () => {
-                  "use server";
-                  await signIn("google", { redirectTo: "/dashboard" });
-                }}
-              >
-                <button
-                  type="submit"
-                  className="bg-teal-500 hover:bg-teal-600 text-white px-8 py-4 rounded-xl text-base font-semibold transition shadow-lg shadow-teal-500/25 flex items-center justify-center gap-2"
+
+            {admin && (
+              <div className="w-full max-w-sm shrink-0">
+                <CredentialsLogin />
+                <Link
+                  href="/"
+                  className="mt-4 text-xs text-navy-300 hover:text-white transition block w-full text-center"
                 >
-                  <GoogleIcon className="w-5 h-5" />
-                  Get Started Free
-                </button>
-              </form>
-              <Link
-                href="#categories"
-                className="glass-card text-white px-8 py-4 rounded-xl text-base font-semibold hover:bg-white/10 transition text-center"
-              >
-                View Categories
-              </Link>
-            </div>
+                  Back to Google Login
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Stats */}
@@ -225,8 +247,13 @@ export default async function LandingPage() {
               </div>
               <span className="font-bold text-lg text-white">HAT Simulator</span>
             </div>
-            <p className="text-sm">Prepare for Pakistan&apos;s HEC HAT exam with AI-powered practice.</p>
-            <p className="text-sm">&copy; 2026 HAT Simulator. All rights reserved.</p>
+            <div className="flex flex-col items-center md:items-end gap-1">
+              <p className="text-sm">Prepare for Pakistan&apos;s HEC HAT exam with AI-powered practice.</p>
+              <div className="flex items-center gap-4">
+                <p className="text-sm">&copy; 2026 HAT Simulator. All rights reserved.</p>
+                <Link href="/?admin=true" className="text-xs text-navy-500 hover:text-navy-300 transition">Admin Login</Link>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
