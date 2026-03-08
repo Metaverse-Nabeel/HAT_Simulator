@@ -16,8 +16,9 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Missing fields" }, { status: 400 });
         }
 
-        // @ts-ignore
-        const user = await prisma.user.findUnique({
+        const userOp = (prisma.user as any);
+
+        const user = await userOp.findUnique({
             where: { id: session.user.id },
             select: { password: true }
         });
@@ -33,8 +34,7 @@ export async function POST(req: Request) {
 
         const hashedPassword = await bcrypt.hash(newPassword, 12);
 
-        // @ts-ignore
-        await prisma.user.update({
+        await userOp.update({
             where: { id: session.user.id },
             data: { password: hashedPassword }
         });
