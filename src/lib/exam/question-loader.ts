@@ -1,5 +1,5 @@
 import type { Category, Level, Section, Difficulty } from "@prisma/client";
-import type { ExamQuestion } from "@/types/exam";
+import type { ExamQuestion, LeanExamQuestion } from "@/types/exam";
 import { SECTION_DISTRIBUTION } from "@/lib/constants/exam";
 import { getCachedQuestions, cacheQuestions } from "./question-cache";
 import { generateQuestions } from "@/lib/ai/generate-questions";
@@ -10,82 +10,62 @@ export async function loadQuestions(
   difficulty: Difficulty,
   questionCount: number,
   sectionPractice?: Section,
-  excludeIds: string[] = []
-): Promise<ExamQuestion[]> {
+  excludeIds: string[] = [],
+  lean: boolean = false
+): Promise<LeanExamQuestion[]> {
   const distribution = SECTION_DISTRIBUTION[category];
 
   // If practicing a single section, all questions from that section
   const sections: { section: Section; count: number }[] = sectionPractice
     ? [{ section: sectionPractice, count: questionCount }]
     : (Object.entries(distribution) as [Section, number][]).map(
-        ([section, pct]) => ({
-          section,
-          count: Math.round((pct / 100) * questionCount),
-        })
-      );
+      ([section, pct]) => ({
+        section,
+        count: Math.round((pct / 100) * questionCount),
+      })
+    );
 
-  const allQuestions: ExamQuestion[] = [];
+  const allQuestions: LeanExamQuestion[] = [];
 
   // Process sections in parallel
   const sectionPromises = sections.map(async ({ section, count }) => {
-    // 1. Try cache first
+    // 1. STRICT CACHE FIRST (No AI generation here to ensure instant response)
     const cached = await getCachedQuestions(
       category,
       level,
       section,
       difficulty,
-      count,
+      count, // Request the full amount
       excludeIds
     );
 
-    const questions: ExamQuestion[] = cached.map((q) => ({
-      id: q.id,
-      questionText: q.questionText,
-      options: q.options as string[],
-      correctAnswer: q.correctAnswer,
-      section: q.section,
-      difficulty: q.difficulty,
-      explanation: q.explanation,
-    }));
+    const questions: LeanExamQuestion[] = cached.map((q) => {
+      const base = {
+        id: q.id,
+        questionText: q.questionText,
+        options: q.options as string[],
+        correctAnswer: q.correctAnswer,
+        section: q.section,
+        difficulty: q.difficulty,
+      };
 
-    // 2. If shortfall, generate via Claude AI
-    const shortfall = count - questions.length;
-    if (shortfall > 0) {
-      try {
-        const generated = await generateQuestions(
-          category,
-          level,
-          section,
-          difficulty,
-          shortfall
-        );
-
-        if (generated.length > 0) {
-          // Cache for future use
-          await cacheQuestions(generated, category, level, section);
-
-          // Add to results
-          questions.push(
-            ...generated.map((g, i) => ({
-              id: `gen-${section}-${Date.now()}-${i}`,
-              questionText: g.questionText,
-              options: g.options,
-              correctAnswer: g.correctAnswer,
-              section,
-              difficulty: (g.difficulty as Difficulty) || difficulty,
-              explanation: g.explanation,
-            }))
-          );
-        }
-      } catch (err) {
-        console.error(`AI generation failed for ${section}, using samples:`, err);
+      if (!lean) {
+        return { ...base, explanation: q.explanation };
       }
-    }
+      return base;
+    });
 
-    // 3. If still short (API failed + empty cache), fill with samples
+    // 2. If short, fill with samples (to ensure user always gets a test immediately)
     const remaining = count - questions.length;
     if (remaining > 0) {
-      questions.push(...generateSampleQuestions(section, difficulty, remaining));
+      const samples = generateSampleQuestions(section, difficulty, remaining);
+      questions.push(...samples.map(q => {
+        if (lean) {
+          const { explanation, ...rest } = q;
+          return rest;
+        }
+        return q;
+      }));
     }
 
     return questions;
@@ -103,6 +83,48 @@ export async function loadQuestions(
   }
 
   return allQuestions.slice(0, questionCount);
+}
+
+/**
+ * Background Replenisher
+ * This function is meant to be called asynchronously (not awaited)
+ * It checks if cache is low and triggers AI generation to refill it.
+ */
+export async function replenishQuestionCache(
+  category: Category,
+  level: Level,
+  difficulty: Difficulty,
+  sectionPractice?: Section
+) {
+  const distribution = SECTION_DISTRIBUTION[category];
+  const sections = sectionPractice
+    ? [sectionPractice]
+    : (Object.keys(distribution) as Section[]);
+
+  for (const section of sections) {
+    try {
+      // Check if we have enough questions in cache (threshold e.g. 50)
+      const cached = await getCachedQuestions(category, level, section, difficulty, 50);
+
+      if (cached.length < 50) {
+        console.log(`[AI-REPLENISH] Low cache for ${section} (${cached.length}). Generating more...`);
+        const generated = await generateQuestions(
+          category,
+          level,
+          section,
+          difficulty,
+          20 // Generate in batches of 20
+        );
+
+        if (generated.length > 0) {
+          await cacheQuestions(generated, category, level, section);
+          console.log(`[AI-REPLENISH] Added ${generated.length} new questions to ${section} cache.`);
+        }
+      }
+    } catch (err) {
+      console.error(`[AI-REPLENISH] Failed for ${section}:`, err);
+    }
+  }
 }
 
 // Fallback sample questions when both cache and AI are empty

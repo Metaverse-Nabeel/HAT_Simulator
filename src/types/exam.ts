@@ -20,6 +20,10 @@ export interface ExamQuestion {
   explanation: string;
 }
 
+export interface LeanExamQuestion extends Omit<ExamQuestion, 'explanation'> {
+  explanation?: string; // Optional for progressive loading
+}
+
 export interface QuestionResult {
   questionId: string;
   questionText: string;

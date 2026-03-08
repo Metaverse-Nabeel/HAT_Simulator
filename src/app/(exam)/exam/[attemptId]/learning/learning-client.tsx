@@ -15,6 +15,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { useEffect } from "react";
 
 interface LearningClientProps {
   attemptId: string;
@@ -26,11 +27,41 @@ export function LearningClient({ attemptId, questions }: LearningClientProps) {
   const [state, dispatch] = useLearningReducer(questions);
   const [showEndDialog, setShowEndDialog] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [explanations, setExplanations] = useState<Record<string, string>>({});
+  const [loadingExplanations, setLoadingExplanations] = useState<Record<string, boolean>>({});
 
   const currentQuestion = state.questions[state.currentIndex];
   const isRevealed = state.revealed.has(state.currentIndex);
   const answeredCount = Object.keys(state.answers).length;
   const progressPct = Math.round((answeredCount / state.questions.length) * 100);
+
+  // Fetch explanation when revealed
+  useEffect(() => {
+    if (isRevealed && !explanations[currentQuestion.id] && !loadingExplanations[currentQuestion.id]) {
+      // If it was already in the question object (e.g. from a sample), use it
+      if (currentQuestion.explanation) {
+        setExplanations(prev => ({ ...prev, [currentQuestion.id]: currentQuestion.explanation }));
+        return;
+      }
+
+      const fetchExplanation = async () => {
+        setLoadingExplanations(prev => ({ ...prev, [currentQuestion.id]: true }));
+        try {
+          const res = await fetch(`/api/questions/${currentQuestion.id}/explanation`);
+          const data = await res.json();
+          if (data.explanation) {
+            setExplanations(prev => ({ ...prev, [currentQuestion.id]: data.explanation }));
+          }
+        } catch (error) {
+          console.error("Failed to fetch explanation:", error);
+        } finally {
+          setLoadingExplanations(prev => ({ ...prev, [currentQuestion.id]: false }));
+        }
+      };
+
+      fetchExplanation();
+    }
+  }, [isRevealed, currentQuestion.id, explanations, loadingExplanations, currentQuestion.explanation]);
 
   const endSession = useCallback(async () => {
     if (submitting) return;
@@ -44,7 +75,7 @@ export function LearningClient({ attemptId, questions }: LearningClientProps) {
       userAnswer: state.answers[i] ?? null,
       correctAnswer: q.correctAnswer,
       section: q.section,
-      explanation: q.explanation,
+      explanation: explanations[q.id] || q.explanation || "",
       timeTaken: 0,
     }));
 
@@ -133,7 +164,12 @@ export function LearningClient({ attemptId, questions }: LearningClientProps) {
             </div>
 
             {/* Explanation */}
-            {isRevealed && <ExplanationPanel explanation={currentQuestion.explanation} />}
+            {isRevealed && (
+              <ExplanationPanel
+                explanation={explanations[currentQuestion.id] || currentQuestion.explanation}
+                loading={loadingExplanations[currentQuestion.id]}
+              />
+            )}
 
             {/* Navigation buttons */}
             <div className="flex items-center justify-between mt-8">

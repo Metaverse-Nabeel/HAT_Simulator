@@ -1,12 +1,22 @@
 import { GoogleGenAI } from "@google/genai";
+import Groq from "groq-sdk";
 
-const globalForGemini = globalThis as unknown as {
+const globalForAI = globalThis as unknown as {
   gemini: GoogleGenAI | undefined;
+  groq: Groq | undefined;
 };
 
-// Initialize the Bonsai Frontier model client (Gemini)
+// Initialize Gemini (Bonsai Frontier)
 export const gemini =
-  globalForGemini.gemini ??
-  new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }); // User will need to provide GEMINI_API_KEY in .env
+  globalForAI.gemini ??
+  new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
 
-if (process.env.NODE_ENV !== "production") globalForGemini.gemini = gemini;
+// Initialize Groq (High-performance inference)
+export const groq =
+  globalForAI.groq ??
+  new Groq({ apiKey: process.env.GROQ_API_KEY }); // User will need to provide GROQ_API_KEY in .env
+
+if (process.env.NODE_ENV !== "production") {
+  globalForAI.gemini = gemini;
+  globalForAI.groq = groq;
+}

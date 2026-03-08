@@ -8,32 +8,48 @@ Font.register({
 });
 
 const styles = StyleSheet.create({
-    page: { padding: 40, fontFamily: 'Open Sans', fontSize: 11, color: '#1e293b' },
-    header: { marginBottom: 30, borderBottom: '2px solid #0f172a', paddingBottom: 10 },
-    title: { fontSize: 24, fontWeight: 'bold', color: '#0f172a' },
-    subtitle: { fontSize: 12, color: '#64748b', marginTop: 5 },
-    section: { marginVertical: 15 },
-    sectionTitle: { fontSize: 16, fontWeight: 'bold', borderBottom: '1px solid #cbd5e1', paddingBottom: 5, marginBottom: 10, color: '#334155' },
-    row: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 5 },
-    label: { fontWeight: 'bold', width: 120 },
-    value: { flex: 1 },
-    scoreBox: { backgroundColor: '#f8fafc', padding: 15, borderRadius: 5, marginTop: 15, flexDirection: 'row', justifyContent: 'space-between', border: '1px solid #e2e8f0' },
-    scoreMain: { fontSize: 20, fontWeight: 'bold', color: '#14b8a6' },
+    page: { padding: 50, fontFamily: 'Open Sans', fontSize: 10, color: '#334155', lineHeight: 1.5 },
+    header: { marginBottom: 25, borderBottom: '2px solid #0f172a', paddingBottom: 15 },
+    title: { fontSize: 22, fontWeight: 'bold', color: '#0f172a' },
+    subtitle: { fontSize: 11, color: '#64748b', marginTop: 4 },
 
-    qContainer: { marginBottom: 15, paddingBottom: 15, borderBottom: '1px solid #f1f5f9' },
-    qHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 5 },
-    qNum: { width: 25, fontWeight: 'bold', color: '#0f172a' },
-    qText: { flex: 1, fontWeight: 'bold' },
-    qStatus: { width: 60, textAlign: 'right', fontSize: 10, fontWeight: 'bold' },
+    section: { marginTop: 20, marginBottom: 10 },
+    sectionTitle: { fontSize: 14, fontWeight: 'bold', borderBottom: '1px solid #e2e8f0', paddingBottom: 6, marginBottom: 12, color: '#0f172a', textTransform: 'uppercase', letterSpacing: 1 },
 
-    optContainer: { flexDirection: 'row', marginLeft: 25, marginTop: 3 },
-    optNum: { width: 20, color: '#64748b' },
-    optText: { flex: 1 },
-    correctOpt: { color: '#16a34a', fontWeight: 'bold' },
-    wrongOpt: { color: '#ef4444', fontWeight: 'bold' },
+    grid: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 20 },
+    gridItem: { width: '50%', marginBottom: 8 },
+    label: { fontWeight: 'bold', fontSize: 9, color: '#64748b', textTransform: 'uppercase' },
+    value: { fontSize: 11, color: '#0f172a', marginTop: 2 },
 
-    explanation: { backgroundColor: '#f0fdf4', padding: 10, marginLeft: 25, marginTop: 8, borderRadius: 4, color: '#0f172a' },
-    expTitle: { fontSize: 10, fontWeight: 'bold', color: '#16a34a', marginBottom: 4 }
+    scoreBox: { backgroundColor: '#f8fafc', padding: 20, borderRadius: 8, marginTop: 10, flexDirection: 'row', justifyContent: 'space-between', border: '1px solid #e2e8f0' },
+    scoreItem: { alignItems: 'center', flex: 1 },
+    scoreLabel: { fontSize: 10, color: '#64748b', marginBottom: 5 },
+    scoreValue: { fontSize: 18, fontWeight: 'bold', color: '#0f172a' },
+    xpValue: { color: '#f59e0b' },
+
+    qContainer: { marginBottom: 20, padding: 15, borderRadius: 8, border: '1px solid #f1f5f9', backgroundColor: '#ffffff' },
+    qHeader: { flexDirection: 'row', marginBottom: 10 },
+    qNum: { width: 30, fontWeight: 'bold', color: '#64748b' },
+    qText: { flex: 1, fontWeight: 'bold', fontSize: 11, lineHeight: 1.4 },
+    qStatus: { marginLeft: 10, padding: '2 6', borderRadius: 4, fontSize: 8, fontWeight: 'bold', textTransform: 'uppercase' },
+
+    statusCORRECT: { backgroundColor: '#dcfce7', color: '#166534' },
+    statusWRONG: { backgroundColor: '#fee2e2', color: '#991b1b' },
+    statusSKIPPED: { backgroundColor: '#f1f5f9', color: '#475569' },
+
+    optList: { marginTop: 5 },
+    optContainer: { flexDirection: 'row', marginBottom: 4, padding: '4 8', borderRadius: 4 },
+    optNum: { width: 20, fontWeight: 'bold', fontSize: 9 },
+    optText: { flex: 1, fontSize: 10 },
+
+    optCorrect: { backgroundColor: '#f0fdf4', border: '1px solid #bdf4c9' },
+    optWrong: { backgroundColor: '#fff1f2', border: '1px solid #fecaca' },
+
+    explanation: { backgroundColor: '#f8fafc', padding: 12, marginTop: 10, borderRadius: 6, borderLeft: '3px solid #14b8a6' },
+    expTitle: { fontSize: 9, fontWeight: 'bold', color: '#14b8a6', marginBottom: 4, textTransform: 'uppercase' },
+    expText: { fontSize: 9, color: '#475569', lineHeight: 1.4 },
+
+    footer: { position: 'absolute', bottom: 30, left: 40, right: 40, borderTop: '1px solid #e2e8f0', paddingTop: 10, flexDirection: 'row', justifyContent: 'space-between', color: '#94a3b8', fontSize: 8 }
 });
 
 export function PdfTemplate({ attempt, user }: { attempt: any, user: any }) {
@@ -47,76 +63,112 @@ export function PdfTemplate({ attempt, user }: { attempt: any, user: any }) {
     return (
         <Document>
             <Page size="A4" style={styles.page}>
-                {/* Header */}
                 <View style={styles.header}>
-                    <Text style={styles.title}>HAT Simulator Report</Text>
-                    <Text style={styles.subtitle}>Candidate: {user.name || user.email}</Text>
-                    <Text style={styles.subtitle}>Date: {new Date(attempt.createdAt).toLocaleDateString()}</Text>
-                </View>
-
-                {/* Summary Details */}
-                <View style={styles.section}>
-                    <Text style={styles.sectionTitle}>Exam Summary</Text>
-                    <View style={styles.row}><Text style={styles.label}>Category:</Text><Text style={styles.value}>{attempt.category}</Text></View>
-                    <View style={styles.row}><Text style={styles.label}>Mode:</Text><Text style={styles.value}>{attempt.mode}</Text></View>
-                    <View style={styles.row}><Text style={styles.label}>Difficulty:</Text><Text style={styles.value}>{attempt.difficulty}</Text></View>
-                    <View style={styles.row}><Text style={styles.label}>Time Spent:</Text><Text style={styles.value}>{timeStr}</Text></View>
-
-                    <View style={styles.scoreBox}>
+                    <Text style={styles.title}>Official HAT Practice Report</Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 }}>
                         <View>
-                            <Text style={{ fontSize: 12, color: '#64748b' }}>Total Score</Text>
-                            <Text style={{ fontSize: 16, fontWeight: 'bold' }}>{attempt.score} / {attempt.maxScore}</Text>
+                            <Text style={styles.subtitle}>Candidate: {user.name || user.email}</Text>
+                            <Text style={styles.subtitle}>Email: {user.email}</Text>
                         </View>
-                        <View>
-                            <Text style={{ fontSize: 12, color: '#64748b', textAlign: 'right' }}>Percentage</Text>
-                            <Text style={{ fontSize: 16, fontWeight: 'bold', textAlign: 'right' }}>{pct}%</Text>
-                        </View>
-                        <View>
-                            <Text style={{ fontSize: 12, color: '#64748b', textAlign: 'right' }}>XP Earned</Text>
-                            <Text style={styles.scoreMain}>+{attempt.xpEarned || 0}</Text>
+                        <View style={{ alignItems: 'flex-end' }}>
+                            <Text style={styles.subtitle}>Date: {new Date(attempt.createdAt).toLocaleDateString()}</Text>
+                            <Text style={styles.subtitle}>ID: {attempt.id.slice(0, 8)}</Text>
                         </View>
                     </View>
                 </View>
 
-                {/* Question Review */}
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>Performance Summary</Text>
+                    <View style={styles.grid}>
+                        <View style={styles.gridItem}>
+                            <Text style={styles.label}>Category</Text>
+                            <Text style={styles.value}>{attempt.category.replace('_', ' ')}</Text>
+                        </View>
+                        <View style={styles.gridItem}>
+                            <Text style={styles.label}>Exam Mode</Text>
+                            <Text style={styles.value}>{attempt.mode}</Text>
+                        </View>
+                        <View style={styles.gridItem}>
+                            <Text style={styles.label}>Difficulty</Text>
+                            <Text style={styles.value}>{attempt.difficulty}</Text>
+                        </View>
+                        <View style={styles.gridItem}>
+                            <Text style={styles.label}>Time Spent</Text>
+                            <Text style={styles.value}>{timeStr}</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.scoreBox}>
+                        <View style={styles.scoreItem}>
+                            <Text style={styles.scoreLabel}>Final Score</Text>
+                            <Text style={styles.scoreValue}>{attempt.score} / {attempt.maxScore}</Text>
+                        </View>
+                        <View style={styles.scoreItem}>
+                            <Text style={styles.scoreLabel}>Accuracy</Text>
+                            <Text style={styles.scoreValue}>{pct}%</Text>
+                        </View>
+                        <View style={styles.scoreItem}>
+                            <Text style={styles.scoreLabel}>XP Awarded</Text>
+                            <Text style={[styles.scoreValue, styles.xpValue]}>+{attempt.xpEarned || 0}</Text>
+                        </View>
+                    </View>
+                </View>
+
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Detailed Review</Text>
                     {rs.map((q: any, i: number) => {
                         const isCorrect = q.userAnswer === q.correctAnswer;
                         const isSkipped = q.userAnswer === null;
+                        const statusKey = isCorrect ? 'statusCORRECT' : isSkipped ? 'statusSKIPPED' : 'statusWRONG';
 
                         return (
                             <View key={i} style={styles.qContainer} wrap={false}>
                                 <View style={styles.qHeader}>
                                     <Text style={styles.qNum}>{i + 1}.</Text>
                                     <Text style={styles.qText}>{q.questionText}</Text>
-                                    <Text style={[styles.qStatus, { color: isCorrect ? '#16a34a' : isSkipped ? '#64748b' : '#ef4444' }]}>
-                                        {isSkipped ? 'SKIPPED' : isCorrect ? 'CORRECT' : 'WRONG'}
-                                    </Text>
+                                    <View>
+                                        <Text style={[styles.qStatus, (styles as any)[statusKey]]}>
+                                            {isSkipped ? 'SKIPPED' : isCorrect ? 'CORRECT' : 'WRONG'}
+                                        </Text>
+                                    </View>
                                 </View>
 
-                                {q.options.map((opt: string, oi: number) => {
-                                    const isCorrectOpt = (oi === q.correctAnswer);
-                                    const isUserOpt = (oi === q.userAnswer);
-                                    let optStyle: any = styles.optText;
-                                    if (isCorrectOpt) optStyle = [styles.optText, styles.correctOpt];
-                                    else if (isUserOpt) optStyle = [styles.optText, styles.wrongOpt];
+                                <View style={styles.optList}>
+                                    {q.options.map((opt: string, oi: number) => {
+                                        const isCorrectOpt = (oi === q.correctAnswer);
+                                        const isUserOpt = (oi === q.userAnswer);
 
-                                    return (
-                                        <View key={oi} style={styles.optContainer}>
-                                            <Text style={styles.optNum}>{String.fromCharCode(65 + oi)}.</Text>
-                                            <Text style={optStyle}>{opt} {isUserOpt && !isCorrectOpt ? '(Your Answer)' : ''}</Text>
-                                        </View>
-                                    );
-                                })}
+                                        return (
+                                            <View
+                                                key={oi}
+                                                style={[
+                                                    styles.optContainer,
+                                                    isCorrectOpt ? styles.optCorrect : (isUserOpt ? styles.optWrong : {})
+                                                ]}
+                                            >
+                                                <Text style={[styles.optNum, isCorrectOpt ? { color: '#166534' } : (isUserOpt ? { color: '#991b1b' } : { color: '#64748b' })]}>
+                                                    {String.fromCharCode(65 + oi)}
+                                                </Text>
+                                                <Text style={[styles.optText, isCorrectOpt ? { color: '#166534', fontWeight: 'bold' } : (isUserOpt ? { color: '#991b1b' } : {})]}>
+                                                    {opt} {isUserOpt && !isCorrectOpt ? '(Your Selection)' : ''}
+                                                </Text>
+                                            </View>
+                                        );
+                                    })}
+                                </View>
 
                                 <View style={styles.explanation}>
                                     <Text style={styles.expTitle}>Explanation</Text>
-                                    <Text>{q.explanation}</Text>
+                                    <Text style={styles.expText}>{q.explanation}</Text>
                                 </View>
                             </View>
                         );
                     })}
+                </View>
+
+                <View style={styles.footer} fixed>
+                    <Text>HAT Simulator - Prep with Confidence</Text>
+                    <Text render={({ pageNumber, totalPages }) => `Page ${pageNumber} of ${totalPages}`} />
                 </View>
             </Page>
         </Document>

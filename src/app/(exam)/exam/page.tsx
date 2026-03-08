@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { Badge } from "@/components/ui/badge";
 import { Brain, Hourglass, Trophy, Activity, Target } from "lucide-react";
+import { ErrorDisplay } from "@/components/exam/ErrorDisplay";
 
 export default function ExamSetupPage() {
     const router = useRouter();
@@ -69,11 +70,7 @@ export default function ExamSetupPage() {
                 </CardHeader>
 
                 <CardContent className="space-y-8 mt-4">
-                    {error && (
-                        <div className="p-3 bg-red-100 text-red-600 rounded-md text-sm border border-red-200">
-                            {error}
-                        </div>
-                    )}
+                    <ErrorDisplay error={error} />
 
                     {/* Grid for Primary Selects */}
                     <div className="grid md:grid-cols-2 gap-6">

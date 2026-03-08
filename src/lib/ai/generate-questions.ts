@@ -1,4 +1,4 @@
-import { gemini } from "./client";
+import { gemini, groq } from "./client";
 import { buildSystemPrompt, buildUserPrompt } from "./prompts";
 import type { Category, Level, Section, Difficulty } from "@prisma/client";
 
@@ -18,30 +18,62 @@ export async function generateQuestions(
   count: number,
   retries = 2
 ): Promise<GeneratedQuestion[]> {
+  const systemPrompt = buildSystemPrompt();
+  const userPrompt = buildUserPrompt(category, level, section, difficulty, count);
+
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const response = await gemini.models.generateContent({
-        model: "gemini-2.5-flash",
-        contents: buildUserPrompt(category, level, section, difficulty, count),
-        config: {
-          systemInstruction: buildSystemPrompt(),
-          responseMimeType: "application/json",
+      let text = "";
+
+      // Attempt 1 & 2: Use Groq (Llama 3.3 70B is elite for reasoning)
+      // Attempt 3: Use Gemini as fallback
+      if (attempt < 2 && process.env.GROQ_API_KEY) {
+        try {
+          const completion = await groq.chat.completions.create({
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: userPrompt },
+            ],
+            model: "llama-3.3-70b-versatile",
+            temperature: 0.7,
+            response_format: { type: "json_object" },
+          });
+          text = completion.choices[0]?.message?.content || "";
+        } catch (groqErr) {
+          console.error("Groq generation failed, falling back to Gemini:", groqErr);
+          // Don't throw, let it fall through to Gemini logic or next retry
         }
-      });
+      }
 
-      const text = response.text || "";
+      if (!text) {
+        const response = await gemini.models.generateContent({
+          model: "gemini-2.0-flash", // Corrected model name
+          contents: userPrompt,
+          config: {
+            systemInstruction: systemPrompt,
+            responseMimeType: "application/json",
+          }
+        });
+        text = response.text || "";
+      }
 
-      // Strip markdown code fences if present just in case the model wraps the output
       const cleaned = text
         .replace(/```json\s*/g, "")
         .replace(/```\s*/g, "")
         .trim();
 
-      const parsed: GeneratedQuestion[] = JSON.parse(cleaned);
+      // Some models might wrap the array in an object like { "questions": [...] }
+      let parsed: any = JSON.parse(cleaned);
+      if (!Array.isArray(parsed) && parsed.questions) {
+        parsed = parsed.questions;
+      }
 
-      // Validate
+      if (!Array.isArray(parsed)) {
+        throw new Error("Generated content is not an array");
+      }
+
       const valid = parsed.filter(
-        (q) =>
+        (q: any) =>
           q.questionText &&
           Array.isArray(q.options) &&
           q.options.length === 4 &&
@@ -54,9 +86,17 @@ export async function generateQuestions(
       if (valid.length > 0) {
         return valid.slice(0, count);
       }
-    } catch (err) {
-      console.error(`Question generation attempt ${attempt + 1} failed:`, err);
-      if (attempt === retries) throw err;
+    } catch (err: any) {
+      const errorMsg = err?.message || String(err);
+      console.error(`Question generation attempt ${attempt + 1} failed:`, errorMsg);
+
+      // If we've exhausted all retries, throw a descriptive error for the UI
+      if (attempt === retries) {
+        if (errorMsg.includes("429") || errorMsg.includes("quota") || errorMsg.includes("exhausted") || errorMsg.includes("rate limit")) {
+          throw new Error("AI engine is currently at capacity (Quota Exhausted). Using backup pool...");
+        }
+        throw new Error(`AI Generation failed after ${retries + 1} attempts: ${errorMsg}`);
+      }
     }
   }
 

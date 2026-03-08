@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { loadQuestions } from "@/lib/exam/question-loader";
+import { loadQuestions, replenishQuestionCache } from "@/lib/exam/question-loader";
 import type { Category, Level, ExamMode, Difficulty, Section } from "@prisma/client";
 
 export async function POST(req: Request) {
@@ -46,16 +46,18 @@ export async function POST(req: Request) {
     );
   }
 
-  // Load questions
+  // 1. Load questions INSTANTLY from cache/pool (LEAN mode to save memory)
   const questions = await loadQuestions(
     category,
     level,
     difficulty,
     questionCount,
-    sectionPractice
+    sectionPractice,
+    [],
+    true // lean: true
   );
 
-  // Create attempt
+  // 2. Create attempt
   const attempt = await prisma.examAttempt.create({
     data: {
       userId: session.user.id,
@@ -65,9 +67,18 @@ export async function POST(req: Request) {
       difficulty,
       questionCount,
       timeLimit: mode === "LEARNING" ? 0 : timeLimit,
-      questionsData: JSON.parse(JSON.stringify(questions)),
+      questionsData: questions as any,
     },
   });
 
+  // 3. TRIGGER BACKGROUND REPLENISHMENT (Non-blocking)
+  // This ensures the pool is always fresh for the next user/session
+  // Next.js (especially on Vercel) keeps the execution context alive for a short time after response
+  // For more robust needs, one would use a Queue or Vercel's `waitUntil` if on Edge.
+  replenishQuestionCache(category, level, difficulty, sectionPractice).catch(err => {
+    console.error("[BACKGROUND-REPLENISH-ERROR]:", err);
+  });
+
+  // 4. Respond IMMEDIATELY
   return NextResponse.json({ attemptId: attempt.id });
 }

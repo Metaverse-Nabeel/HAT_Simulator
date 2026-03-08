@@ -9,28 +9,40 @@ const DIFFICULTY_DESCRIPTIONS: Record<string, string> = {
 };
 
 const SECTION_DESCRIPTIONS: Record<Section, string> = {
-  VERBAL: "Vocabulary/Synonyms, Sentence Completion, Analogies, Antonyms, Reading Comprehension, Sentence Correction. Test vocabulary, reading comprehension, and sentence structure.",
-  ANALYTICAL: "Logic puzzles (grouping, ordering, scheduling), Critical reasoning, Conditional logic, Syllogisms. Use scenario-based formats with strict logical bounds.",
-  QUANTITATIVE: "Arithmetic, Algebra, Geometry, Number Theory, Speed/Distance/Time, Statistics, Probability. Test mathematical aptitude at the 16-year education level.",
+  VERBAL: "High-level vocabulary, nuanced analogies, and dense sentence completion. Focus on contextual meaning.",
+  ANALYTICAL: "Complex logic games (grouping/ordering) with 3-5 conditions. Must require deduction, not just reading.",
+  QUANTITATIVE: "Advanced algebra, geometry theorems, and multi-concept word problems (e.g., speed + ratios).",
 };
 
 export function buildSystemPrompt(): string {
-  return `You are a question generator for Pakistan's HEC HAT (Higher Education Aptitude Test) simulator.
+  return `You are an elite Question Engineer for Pakistan's HEC HAT (Higher Education Aptitude Test).
 
-CORE RULES:
-1. Target audience: Graduate-level applicants (MS/MPhil/PhD) in Pakistan.
-2. Every question MUST have exactly 4 options (A, B, C, D).
-3. Every question MUST have exactly one correct answer (index 0-3).
-4. Every question MUST include a detailed explanation.
-5. Questions must be original and not copied from any source.
-6. Avoid culturally biased or offensive content.
-7. For Analytical Reasoning, ensure questions follow strict logical bounds without multiple interpretations.
-8. Output ONLY valid JSON — no markdown, no code fences, no extra text.
+CORE PRINCIPLES:
+1. TARGET: Graduate aspirants (MS/MPhil/PhD). The tone must be academic and rigorous.
+2. STRUCTURE: 4 options (A, B, C, D). exactly one correct answer.
+3. EXPLANATIONS: Professional, step-by-step logical walkthroughs.
+4. AUTHENTICITY: Mimic the HEC HAT style (Verbal analogies, Analytical puzzles, Quantitative theorems).
+5. FORMAT: Return ONLY a valid JSON array. No text outside JSON.
 
-SAMPLE PATTERNS:
-- Verbal: "Choose the word most similar in meaning to X", "Complete the sentence: ...", "X is to Y as A is to ___"
-- Quantitative: "If 8^n = 16^4, find n", "The average of 5 numbers is 12.6...", ratio/proportion word problems
-- Analytical: "Seven supervisors F,G,H,J,K,M,N. Messages can be sent..." with condition-based deduction questions`;
+FEW-SHOT EXAMPLES (INSPIRATION):
+
+[Verbal]
+Question: Choose the word most similar in meaning to "PRECIPITOUS".
+Options: ["Cautious", "Steep", "Gradual", "Timid"]
+Correct: 1 (Steep)
+Explanation: "Precipitous" describes a very steep or overhanging cliff, or an action done suddenly without careful consideration. Among the options, "Steep" is the direct synonym.
+
+[Analytical]
+Question: Six people (P, Q, R, S, T, U) are sitting at a circular table. P is opposite Q. R is to the immediate right of P. If S is opposite R, who is to the immediate left of Q?
+Options: ["T", "S", "U", "R"]
+Correct: 1 (S)
+Explanation: 1. P is at the top. 2. Q is at the bottom (opposite P). 3. R is to the right of P. 4. S is opposite R (which means S is to the left of Q). Therefore, S is to the immediate left of Q.
+
+[Quantitative]
+Question: The cost of 3 pens and 5 pencils is Rs. 110. If the price of a pen increases by 10% and a pencil decreases by 5%, the new cost is Rs. 118. Find the original price of a pen.
+Options: ["Rs. 20", "Rs. 25", "Rs. 30", "Rs. 35"]
+Correct: 0 (Rs. 20)
+Explanation: Setup equations: 3x + 5y = 110. (3 * 1.1x) + (5 * 0.95y) = 118... Solving the system yields x=20.`;
 }
 
 export function buildUserPrompt(
@@ -40,25 +52,28 @@ export function buildUserPrompt(
   difficulty: Difficulty,
   count: number
 ): string {
-  const diff = difficulty === "RANDOM" ? "a mix of Easy, Medium, Hard, and Super Hard" : difficulty;
-  const diffDesc = difficulty !== "RANDOM" ? `\nDifficulty guide: ${DIFFICULTY_DESCRIPTIONS[difficulty]}` : "";
+  const diff = difficulty === "RANDOM" ? "a mix of difficulties" : difficulty;
+  const diffDesc = difficulty !== "RANDOM" ? `\nTarget Difficulty Depth: ${DIFFICULTY_DESCRIPTIONS[difficulty]}` : "";
 
-  return `Generate exactly ${count} ${SECTION_LABELS[section]} questions for the ${CATEGORY_META[category].label} category at the ${level} level.
+  return `TASK: Generate exactly ${count} ${SECTION_LABELS[section]} questions.
+PLATFORM: ${CATEGORY_META[category].label} (${level}).
+FOCUS: ${SECTION_DESCRIPTIONS[section]}
 
-Difficulty: ${diff}${diffDesc}
-Section: ${SECTION_LABELS[section]}
-Section focus: ${SECTION_DESCRIPTIONS[section]}
+CONSTRAINTS:
+- Difficulty: ${diff}${diffDesc}
+- Ensure options are distinct and plausible (no obvious throwaways unless EASY).
+- The explanation must teach the logic required to solve the problem.
 
-Return a JSON array with this exact schema:
+SCHEMA:
 [
   {
-    "questionText": "string — the full question",
+    "questionText": "string",
     "options": ["string", "string", "string", "string"],
     "correctAnswer": 0,
-    "explanation": "string — detailed explanation of why the correct answer is right",
+    "explanation": "string",
     "difficulty": "EASY" | "MEDIUM" | "HARD" | "SUPER_HARD"
   }
 ]
 
-IMPORTANT: Return ONLY the JSON array. No markdown, no explanation outside JSON.`;
+IMPORTANT: Start and end with [ and ]. No markdown code blocks.`;
 }

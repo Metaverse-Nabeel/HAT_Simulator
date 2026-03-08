@@ -6,6 +6,8 @@ import { CATEGORY_META, SECTION_LABELS } from "@/lib/constants/exam";
 import type { QuestionResult } from "@/types/exam";
 import type { Category, ExamMode, Section } from "@prisma/client";
 import { Logo } from "@/components/layout/logo";
+import { useEffect, useCallback } from "react";
+import { ExplanationPanel } from "@/components/exam/explanation-panel";
 
 interface ResultsClientProps {
   attemptId: string;
@@ -33,6 +35,34 @@ export function ResultsClient({
 }: ResultsClientProps) {
   const [filter, setFilter] = useState<ReviewFilter>("ALL");
   const [expandedQuestion, setExpandedQuestion] = useState<number | null>(null);
+  const [explanations, setExplanations] = useState<Record<string, string>>({});
+  const [loadingExplanations, setLoadingExplanations] = useState<Record<string, boolean>>({});
+
+  const fetchExplanation = useCallback(async (questionId: string) => {
+    if (explanations[questionId] || loadingExplanations[questionId]) return;
+
+    setLoadingExplanations(prev => ({ ...prev, [questionId]: true }));
+    try {
+      const res = await fetch(`/api/questions/${questionId}/explanation`);
+      const data = await res.json();
+      if (data.explanation) {
+        setExplanations(prev => ({ ...prev, [questionId]: data.explanation }));
+      }
+    } catch (err) {
+      console.error("Failed to fetch explanation:", err);
+    } finally {
+      setLoadingExplanations(prev => ({ ...prev, [questionId]: false }));
+    }
+  }, [explanations, loadingExplanations]);
+
+  const toggleExpand = (idx: number, questionId: string) => {
+    if (expandedQuestion === idx) {
+      setExpandedQuestion(null);
+    } else {
+      setExpandedQuestion(idx);
+      fetchExplanation(questionId);
+    }
+  };
 
   const pct = maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
   const correct = results.filter((r) => r.userAnswer === r.correctAnswer).length;
@@ -210,18 +240,22 @@ export function ResultsClient({
 
         {/* Answer Review */}
         <div className="bg-white rounded-2xl border border-navy-100 shadow-sm p-6">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="font-bold text-navy-900">Answer Review</h2>
-            <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <h2 className="font-bold text-navy-900 text-lg">Answer Review</h2>
+            <div className="flex flex-wrap gap-2">
               {(["ALL", "CORRECT", "WRONG", "SKIPPED"] as ReviewFilter[]).map((f) => (
                 <button
                   key={f}
                   onClick={() => setFilter(f)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition ${
-                    filter === f ? "bg-teal-50 text-teal-700" : "text-navy-500 hover:bg-navy-50"
-                  }`}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition flex-1 sm:flex-none whitespace-nowrap min-w-[70px] ${filter === f
+                    ? "bg-teal-600 text-white shadow-sm"
+                    : "bg-navy-50 text-navy-600 hover:bg-navy-100"
+                    }`}
                 >
-                  {f === "ALL" ? `All (${results.length})` : f === "CORRECT" ? `Correct (${correct})` : f === "WRONG" ? `Wrong (${wrong})` : `Skipped (${skipped})`}
+                  {f === "ALL" ? "All" : f === "CORRECT" ? "Correct" : f === "WRONG" ? "Wrong" : "Skipped"}
+                  <span className={`ml-1.5 opacity-80 ${filter === f ? "text-teal-50" : "text-navy-400"}`}>
+                    ({f === "ALL" ? results.length : f === "CORRECT" ? correct : f === "WRONG" ? wrong : skipped})
+                  </span>
                 </button>
               ))}
             </div>
@@ -237,18 +271,16 @@ export function ResultsClient({
               return (
                 <div key={idx} className="border border-navy-100 rounded-xl overflow-hidden">
                   <button
-                    onClick={() => setExpandedQuestion(expanded ? null : idx)}
+                    onClick={() => toggleExpand(idx, r.questionId)}
                     className="w-full flex items-center gap-4 p-4 text-left hover:bg-navy-50/50 transition"
                   >
-                    <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${
-                      isSkipped ? "bg-navy-100 text-navy-500" : isCorrect ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
-                    }`}>
+                    <span className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold shrink-0 ${isSkipped ? "bg-navy-100 text-navy-500" : isCorrect ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                      }`}>
                       {originalIndex + 1}
                     </span>
                     <span className="text-sm text-navy-800 flex-1 truncate">{r.questionText}</span>
-                    <span className={`text-xs font-medium px-2 py-0.5 rounded ${
-                      isSkipped ? "bg-navy-100 text-navy-500" : isCorrect ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
-                    }`}>
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded ${isSkipped ? "bg-navy-100 text-navy-500" : isCorrect ? "bg-green-50 text-green-700" : "bg-red-50 text-red-700"
+                      }`}>
                       {isSkipped ? "Skipped" : isCorrect ? "Correct" : "Wrong"}
                     </span>
                     <svg className={`w-4 h-4 text-navy-400 transition ${expanded ? "rotate-180" : ""}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -277,15 +309,11 @@ export function ResultsClient({
                           );
                         })}
                       </div>
-                      <div className="bg-gradient-to-r from-teal-50 to-blue-50 rounded-xl p-4">
-                        <div className="flex items-start gap-2">
-                          <span className="text-lg">&#128161;</span>
-                          <div>
-                            <p className="text-xs font-semibold text-teal-700 mb-1">Explanation</p>
-                            <p className="text-sm text-navy-700">{r.explanation}</p>
-                          </div>
-                        </div>
-                      </div>
+
+                      <ExplanationPanel
+                        explanation={explanations[r.questionId] || r.explanation}
+                        loading={loadingExplanations[r.questionId]}
+                      />
                     </div>
                   )}
                 </div>
