@@ -5,7 +5,12 @@ The HAT (Higher Education Aptitude Test) Simulator is a web-based application de
 
 ## 2. Core Features
 ### 2.1 Exam Categories & Levels
-- **Categories**: General, Engineering, Arts & Humanities, Management Sciences, Medical.
+- **Categories** (aligned with official HEC HAT streams):
+  - **HAT-I**: Engineering & Technology, Computer Science, Mathematics, Statistics, Physics.
+  - **HAT-II**: Management Sciences, Business Education.
+  - **HAT-III**: Arts & Humanities, Social Sciences, Psychology, Law.
+  - **HAT-IV**: Biological & Medical Sciences, Agriculture & Veterinary, Physical Sciences.
+  - **HAT-General**: Religious Studies.
 - **Levels**: MS (Master's) and PhD. Each category has a separate question pool and difficulty calibration per level.
 
 ### 2.2 Question Sections
@@ -43,7 +48,7 @@ const distribution = getSectionDistribution('HAT-I');
 ```
 
 ### 2.5 Exam Simulation Modes
-- **Testing Mode**: Replicates the real exam experience. Default is 100 questions and 120 minutes limit. Results are hidden until the exam is submitted.
+- **Testing Mode**: Replicates the real exam experience. Default is 100 questions and 120 minutes limit. Results are hidden until the exam is submitted. Includes "Mark for Review" feature to flag questions for later revisit, confirmation dialog before final submission, time warnings (e.g., 5 min remaining), and auto-submit on timeout.
 - **Learning Mode**: An untimed or self-paced mode where answers and detailed explanations are provided immediately after attempting each question to facilitate learning.
 
 ### 2.6 Gamification
