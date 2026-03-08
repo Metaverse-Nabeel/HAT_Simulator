@@ -1,0 +1,151 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Level {
+  MS
+  PHD
+}
+
+enum ExamMode {
+  TESTING
+  LEARNING
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+  SUPER_HARD
+  RANDOM
+}
+
+enum Section {
+  VERBAL
+  ANALYTICAL
+  QUANTITATIVE
+}
+
+enum Category {
+  HAT_I
+  HAT_II
+  HAT_III
+  HAT_IV
+  HAT_GENERAL
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  role          Role      @default(USER)
+  banned        Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts           Account[]
+  sessions           Session[]
+  gamificationProfile GamificationProfile?
+  examAttempts       ExamAttempt[]
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+model GamificationProfile {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  totalXP          Int      @default(0)
+  currentStreak    Int      @default(0)
+  longestStreak    Int      @default(0)
+  lastActivityDate DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model ExamAttempt {
+  id            String     @id @default(cuid())
+  userId        String
+  category      Category
+  level         Level
+  mode          ExamMode
+  difficulty    Difficulty
+  questionCount Int        @default(100)
+  timeLimit     Int        @default(7200) // seconds
+  score         Int?
+  maxScore      Int?
+  timeSpent     Int?       // seconds
+  xpEarned      Int?
+  resultsData   Json?
+  questionsData Json?
+  status        String     @default("IN_PROGRESS") // IN_PROGRESS, COMPLETED
+  createdAt     DateTime   @default(now())
+  completedAt   DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model Question {
+  id            String     @id @default(cuid())
+  category      Category
+  level         Level
+  section       Section
+  difficulty    Difficulty
+  questionText  String
+  options       Json       // ["A", "B", "C", "D"]
+  correctAnswer Int        // 0-3 index
+  explanation   String
+  createdAt     DateTime   @default(now())
+
+  @@index([category, level, section, difficulty])
+}
