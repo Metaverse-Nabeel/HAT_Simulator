@@ -51,6 +51,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
+        // Ensure user has a profile even if signed up via credentials
+        const existing = await prisma.gamificationProfile.findUnique({
+          where: { userId: user.id },
+        });
+        if (!existing) {
+          await prisma.gamificationProfile.create({
+            data: { userId: user.id },
+          }).catch(() => {/* handle silent failure if race condition still exists */ });
+        }
+
         const dbUser = await prisma.user.findUnique({
           where: { id: user.id },
           select: { role: true },
@@ -67,18 +77,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return session;
     },
-    async signIn({ user }) {
-      if (user.id) {
-        const existing = await prisma.gamificationProfile.findUnique({
-          where: { userId: user.id },
-        });
-        if (!existing) {
-          await prisma.gamificationProfile.create({
-            data: { userId: user.id },
-          });
-        }
-      }
-      return true;
-    },
   },
+  events: {
+    async createUser({ user }) {
+      if (user.id) {
+        await prisma.gamificationProfile.create({
+          data: { userId: user.id },
+        }).catch(err => console.error("Event Profile creation error:", err));
+      }
+    }
+  }
 });
