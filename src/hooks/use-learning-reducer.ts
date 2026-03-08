@@ -55,7 +55,7 @@ function learningReducer(state: LearningState, action: LearningAction): Learning
 }
 
 export function useLearningReducer(questions: ExamQuestion[]) {
-  return useReducer(learningReducer, questions, (qs) => ({
+  return useReducer(learningReducer, questions, (qs): LearningState => ({
     questions: qs,
     currentIndex: 0,
     answers: {},

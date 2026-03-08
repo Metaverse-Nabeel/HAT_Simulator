@@ -80,7 +80,7 @@ export function createInitialState(
 }
 
 export function useExamReducer(questions: ExamQuestion[], timeLimit: number) {
-  return useReducer(examReducer, { questions, timeLimit }, ({ questions, timeLimit }) =>
+  return useReducer(examReducer, { questions, timeLimit }, ({ questions, timeLimit }): ExamState =>
     createInitialState(questions, timeLimit)
   );
 }
