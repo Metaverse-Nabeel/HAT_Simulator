@@ -18,7 +18,7 @@ export default async function ProfilePage() {
         where: { id: session.user.id },
         include: {
             gamificationProfile: true,
-            attempts: {
+            examAttempts: {
                 orderBy: { createdAt: "desc" },
                 take: 3,
             }
@@ -124,9 +124,9 @@ export default async function ProfilePage() {
                             <History className="w-5 h-5 text-navy-200" />
                         </CardHeader>
                         <CardContent className="p-6">
-                            {user.attempts.length > 0 ? (
+                            {user.examAttempts.length > 0 ? (
                                 <div className="space-y-4">
-                                    {user.attempts.map((attempt) => (
+                                    {user.examAttempts.map((attempt) => (
                                         <div key={attempt.id} className="flex items-center justify-between p-4 rounded-2xl bg-navy-50/50 border border-navy-100/50 hover:bg-navy-50 transition">
                                             <div className="flex items-center gap-4">
                                                 <div className="w-10 h-10 rounded-xl bg-white border border-navy-100 flex items-center justify-center font-bold text-navy-900 shadow-sm">
