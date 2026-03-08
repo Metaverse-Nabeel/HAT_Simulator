@@ -26,7 +26,24 @@ export default async function ResultsPage({
     redirect(`/exam/${attemptId}/testing`);
   }
 
-  const results = attempt.resultsData as unknown as QuestionResult[];
+  const resultsData = (attempt.resultsData as unknown as QuestionResult[]) || [];
+
+  // RE-HYDRATE EXPLANATIONS (Fix for Light Snapshot Optimization)
+  const questionIds = resultsData
+    .filter(r => r.questionId && !r.questionId.startsWith('sample-'))
+    .map(r => r.questionId);
+
+  const dbExplanations = await prisma.question.findMany({
+    where: { id: { in: questionIds } },
+    select: { id: true, explanation: true }
+  });
+
+  const expMap = new Map(dbExplanations.map(e => [e.id, e.explanation]));
+
+  const results = resultsData.map(r => ({
+    ...r,
+    explanation: r.explanation || expMap.get(r.questionId) || "Explanation not available."
+  }));
 
   return (
     <ResultsClient

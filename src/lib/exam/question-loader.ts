@@ -59,13 +59,8 @@ export async function loadQuestions(
     const remaining = count - questions.length;
     if (remaining > 0) {
       const samples = generateSampleQuestions(section, difficulty, remaining);
-      questions.push(...samples.map(q => {
-        if (lean) {
-          const { explanation, ...rest } = q;
-          return rest;
-        }
-        return q;
-      }));
+      // Sample questions DON'T get stripped because they aren't in the DB to fetch later
+      questions.push(...samples);
     }
 
     return questions;
