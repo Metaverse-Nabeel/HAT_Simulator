@@ -26,20 +26,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           where: { email: credentials.email as string },
         });
 
-        if (!user || !user.password) return null;
+        // Use casting to bypass adapter-user type shadowing that might hide 'password'
+        const dbUser = user as any;
+        if (!dbUser || !dbUser.password) return null;
 
         const isPasswordValid = await compare(
           credentials.password as string,
-          user.password
+          dbUser.password
         );
 
         if (!isPasswordValid) return null;
 
         return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
+          id: dbUser.id,
+          email: dbUser.email,
+          name: dbUser.name,
+          role: dbUser.role,
         };
       },
     }),
@@ -50,14 +52,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
+      if (user && user.id) {
         // Ensure user has a profile even if signed up via credentials
         const existing = await prisma.gamificationProfile.findUnique({
           where: { userId: user.id },
         });
         if (!existing) {
           await prisma.gamificationProfile.create({
-            data: { userId: user.id },
+            data: { userId: user.id as string },
           }).catch(() => {/* handle silent failure if race condition still exists */ });
         }
 
@@ -82,7 +84,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async createUser({ user }) {
       if (user.id) {
         await prisma.gamificationProfile.create({
-          data: { userId: user.id },
+          data: { userId: user.id as string },
         }).catch(err => console.error("Event Profile creation error:", err));
       }
     }
