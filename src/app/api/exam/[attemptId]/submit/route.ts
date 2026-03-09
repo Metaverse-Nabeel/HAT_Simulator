@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import type { QuestionResult } from "@/types/exam";
+import { calculateXP, getStreakMultiplier } from "@/lib/gamification/xp";
+import { updateStreak, addXP } from "@/lib/gamification/streaks";
 
 export async function POST(
   req: Request,
@@ -39,6 +41,16 @@ export async function POST(
     }
   }
 
+  // Update streak and calculate XP
+  const { currentStreak } = await updateStreak(session.user.id);
+  const streakMultiplier = getStreakMultiplier(currentStreak);
+  const xpEarned = calculateXP(results, attempt.difficulty, streakMultiplier);
+
+  // Add XP to user's gamification profile
+  if (xpEarned > 0) {
+    await addXP(session.user.id, xpEarned);
+  }
+
   await prisma.examAttempt.update({
     where: { id: attemptId },
     data: {
@@ -48,8 +60,9 @@ export async function POST(
       timeSpent,
       resultsData: JSON.parse(JSON.stringify(results)),
       completedAt: new Date(),
+      xpEarned,
     },
   });
 
-  return NextResponse.json({ score, maxScore: results.length });
+  return NextResponse.json({ score, maxScore: results.length, xpEarned });
 }
