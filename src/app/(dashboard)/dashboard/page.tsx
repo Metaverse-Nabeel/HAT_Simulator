@@ -62,7 +62,7 @@ export default async function DashboardPage() {
           <h1 className="text-3xl font-bold text-navy-900">Hello, {session.user.name?.split(" ")[0]}!</h1>
           <p className="text-navy-500 mt-1 text-lg">Your HAT preparation journey is evolving.</p>
         </div>
-        <Link href="/exam">
+        <Link href="/exam/setup">
           <Button className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-6 rounded-xl shadow-lg transition-transform hover:scale-105 active:scale-95">
             <BookOpen className="w-5 h-5 mr-2" />
             Start Practice Session
@@ -151,7 +151,7 @@ export default async function DashboardPage() {
                 <p className="text-navy-400 text-sm mt-1 max-w-[250px] mx-auto">
                   Take your first practice exam to start tracking your performance.
                 </p>
-                <Link href="/exam" className="mt-4 inline-block">
+                <Link href="/exam/setup" className="mt-4 inline-block">
                   <Button variant="outline" className="border-teal-200 text-teal-600 hover:bg-teal-50">
                     Go to Exam Setup
                   </Button>

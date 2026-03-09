@@ -159,7 +159,7 @@ export default async function ProfilePage() {
                                         <Activity className="w-6 h-6 text-navy-200" />
                                     </div>
                                     <p className="text-sm font-medium">No activity recorded yet.</p>
-                                    <Link href="/exam">
+                                    <Link href="/exam/setup">
                                         <Button variant="link" className="text-teal-600 font-bold hover:scale-105 transition-transform cursor-pointer">
                                             Start your first exam
                                         </Button>

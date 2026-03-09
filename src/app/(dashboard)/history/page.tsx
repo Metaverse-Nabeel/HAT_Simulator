@@ -163,7 +163,7 @@ export default async function HistoryPage() {
                             <p className="text-navy-400 mt-2 max-w-sm mx-auto">
                                 You haven't taken any exams yet. Start your first session to see your progress here.
                             </p>
-                            <Link href="/exam" className="mt-8 inline-block">
+                            <Link href="/exam/setup" className="mt-8 inline-block">
                                 <Button className="bg-teal-600 hover:bg-teal-700 text-white px-8 py-6 rounded-xl shadow-lg transition-all hover:scale-105">
                                     Start Practice Session
                                 </Button>
